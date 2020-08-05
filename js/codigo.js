@@ -1,36 +1,48 @@
 $(document).ready(function(){      
-    $("#btn_enviar").click(function(){
+    $("#btn_registro").click(function(){
 
-        const usuario = $("#txt_usuario").val();
+        const documento = $("#txt_documento").val();
         const pass = $("#txt_pass").val();
         const email = $("#txt_email").val();
         const telefono = $("#txt_telefono").val();
         const direccion = $("#txt_direccion").val();
         const nombre = $("#txt_nombre").val();
         const apellido = $("#txt_apellido").val();
-        const sexo = $("#select_sexo").val();
+        const genero = $("#select_genero").val();
 
         try{
             /*Validar si estan vacios*/
-            if(!usuario || !pass || !email || !telefono || !direccion || !nombre || !apellido || !sexo){
+            if(!documento || !pass || !email || !telefono || !direccion || !nombre || !apellido || !genero){
                 throw "Debe completar todos los campos!";
             }
-        const url = `http://api.marcelocaiafa.com/usuario`;
+        const url = `https://ort-api.herokuapp.com/usuarios/registro`;
         $.ajax({
             data:JSON.stringify(
                 {
-                "nombre":nombre,
-                "apellido":apellido,
+                "telefono": telefono,
                 "email":email,
-                "password":pass,
-                "sexo":sexo,
+                "contrasenia":pass,
+                "genero":genero,
+                "apellido":apellido,
+                "nombre":nombre,
+                "documento":documento
                }),
 
             url:url,
             type:"POST",
-            dataType:"jsonp",
+            dataType:"json",
             success:function(respuesta){
+                $.ajaxSetup({
+                    headers:{
+                        token:respuesta.token
+                    }
+                })
+                let usuario = respuesta.descripcion;
+                usuario = JSON.stringify(usuario);
+                sessionStorage.setItem("usuario", usuario);
                 ons.notification.toast("El usuario se registro correctamente", {"timeout":3000});
+                const nav = document.getElementById("nav");
+                nav.pushPage("t_info_medico");
             },
             error:function(respuesta_error, status, error){
                 ons.notification.toast(respuesta_error.responseJSON.descripcion, {"timeout":3000});
@@ -41,4 +53,10 @@ $(document).ready(function(){
             ons.notification.toast(e, {"timeout":3000});
         }
     })
+
+    $("#btn_no_registrado").click(function(){
+        const nav = document.getElementById("nav");
+        nav.pushPage("t_registro");
+    })
+
 })
