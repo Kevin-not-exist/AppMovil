@@ -1,0 +1,12 @@
+{
+    "name": "Plantillas_B_sica_Bootstrap_4",
+    "version": "1.0.0",
+    "main": "path/to/main.css",
+    "ignore": [
+        ".jshintrc", "**/*.txt"
+    ],
+    "dependencies": {
+    },
+    "devDependencies": {
+    }
+}
