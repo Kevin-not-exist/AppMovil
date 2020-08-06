@@ -59,4 +59,13 @@ $(document).ready(function(){
         nav.pushPage("t_registro");
     })
 
+    $("#btn_login").click(function(){
+        const email = $("#txt_email_login").val();
+        const pass = $("#txt_pass_login").val();
+        const tipo = $("#select_personal").val();
+
+        const nav = document.getElementById("nav");
+        nav.pushPage("t_info_medico");
+    })
+
 })

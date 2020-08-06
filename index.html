@@ -18,62 +18,7 @@
         <script src="https://unpkg.com/onsenui/js/onsenui.min.js"></script>
     </head>
     <body>
-        <ons-navigator swipeable id="nav" page="t_info_medico"></ons-navigator>
-
-        <template id="t_listado"> 
-            <ons-page id="p_listado">
-                <script>
-                    ons.getScriptPage().getInit = function(){
-                        
-                    }
-
-                    ons.getScriptPage().onInit = function(){
-                        //se ejecuta cuando se crea la pagina [única vez]
-                    }
-
-                    ons.getScriptPage().onShow = function(){
-                        //cada vez que entro a esta pagina
-                        let usuario = sessionStorage.getItem("usuario");
-                        usuario = JSON.parse(usuario);
-
-                        $("#txt_saludo").html(`Hola <strong>${usuario.nombre}</strong>`);
-                        const url = "http://api.marcelocaiafa.com/local";
-                        $.ajax({
-                            url = url,
-                            type: "GET",
-                            dataType: "json",
-                            success: function(locales){
-                                $.each(locales.descripcion, function(key, local){
-                                    let item = "";
-                                    item = `
-                                        <ons-list-item>
-                                            <div class="left">
-                                                <img class="list__thumbnail" src="http://images.marcelocaiafa.com/local/${local.imagen}">
-                                            </div>
-                                            <div class="center">
-                                                <span class="list-item-title">${local.nombre}</span><span class="list-item__subtitle">${local.telefono}</span>
-                                            </div>
-                                        </ons-list-item>`;
-                                        $("#l_list").append(item);
-                                });
-                            },
-                        error: function(xml_request, err, status){
-                            ons.notification.toast(xml_request.responseJSON.descripcion, {"timeout": 3000})
-                        }
-                        })
-                    }
-                </script>
-
-                <section>
-                    <h1>Listado de locales</h1>
-                    <p id="txt_saludo"></p>
-                    <ons-list>
-                        <ons-list-header id="l_list">Lista de locales</ons-list-header>
-                    </ons-list>
-                </section>
-            </ons-page>
-        </template>
-
+        <ons-navigator swipeable id="nav" page="t_login"></ons-navigator>
         <template id="t_login">
             <ons-page id="p_login">
                 <section class="row text-center mx-auto container">
@@ -137,6 +82,8 @@
                       </nav>
                       <h1 class="text-center">Información de profesionales médicos</h1>
                 </section>
+
+                <section id="s_list_medico"></section>
             </ons-page>
         </template>
 
