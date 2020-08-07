@@ -18,15 +18,15 @@
         <script src="https://unpkg.com/onsenui/js/onsenui.min.js"></script>
     </head>
     <body>
-        <ons-navigator swipeable id="nav" page="t_login"></ons-navigator>
+        <ons-navigator swipeable id="nav" page="t_registro"></ons-navigator>
         <template id="t_login">
             <ons-page id="p_login">
                 <section class="row text-center mx-auto container">
                     <h1 class="col-12">Login</h1>
-                    <input type="email" id="txt_email_login" required placeholder="E-mail" class="col-8 mx-auto form-control my-1">
-                    <input type="password" id="txt_pass_login" required placeholder="Contraseña" class="col-8 mx-auto form-control my-2">
+                    <input type="email" id="txt_email_login" required placeholder="E-mail" class="col-8 mx-auto form-control my-1" required>
+                    <input type="password" id="txt_pass_login" required placeholder="Contraseña" class="col-8 mx-auto form-control my-2" required>
                     <label for="select_personal" class="col-5">Personal</label>
-                    <select id="select_personal" class="col-5">
+                    <select id="select_personal" class="col-5" required>
                         <option value="">Seleccione una opción</option>
                         <option value="U">Usuario</option>
                         <option value="D">Doctor</option>
@@ -42,20 +42,21 @@
                 <section class="row text-center mx-auto container my-5 py-5">
                     <h1 class="col-12">Registro de usuario</h1>
 
-                    <input type="text" id="txt_nombre" required placeholder="Nombre" class="col-8 mx-auto form-control my-2">
-                    <input type="text" id="txt_apellido" required placeholder="Apellido" class="col-8 mx-auto form-control my-2">
-                    <input type="text" id="txt_documento" required placeholder="Documento" class="col-8 mx-auto form-control my-2">
-                    <input type="password" id="txt_pass" required placeholder="Contraseña" class="col-8 mx-auto form-control my-2">
-                    <input type="email" id="txt_email" required placeholder="E-mail" class="col-8 mx-auto form-control my-2">
-                    <input type="text" id="txt_telefono" required placeholder="Teléfono" class="col-8 mx-auto form-control my-2">
-                    <input type="text" id="txt_direccion" required placeholder="Dirección" class="col-8 mx-auto form-control my-2">
+                    <input type="text" id="txt_nombre" required placeholder="Nombre" class="col-8 mx-auto form-control my-2" required value="Kevin">
+                    <input type="text" id="txt_apellido" required placeholder="Apellido" class="col-8 mx-auto form-control my-2" required value="Devotto">
+                    <input type="text" id="txt_documento" required placeholder="Documento" class="col-8 mx-auto form-control my-2" required value="5155698699">
+                    <input type="password" id="txt_pass" required placeholder="Contraseña" class="col-8 mx-auto form-control my-2" required value="753">
+                    <input type="password" id="txt_pass_repeat" required placeholder="Repita la contraseña" class="col-8 mx-auto form-control my-2" required value="753">
+                    <input type="email" id="txt_email" required placeholder="E-mail" class="col-8 mx-auto form-control my-2" required>
+                    <input type="text" id="txt_telefono" required placeholder="Teléfono" class="col-8 mx-auto form-control my-2" required value="099112544">
+                    <input type="text" id="txt_direccion" required placeholder="Dirección" class="col-8 mx-auto form-control my-2" required value="not exist 404">
                     <label for="select_genero" class="col-5 my-2">Genero</label>
-                    <select id="select_genero" class="col-5">
-                        <option value="">Seleccione una opción</option>
+                    <ons-select id="select_genero" class="col-5" required>
+                        <option value="" selected disabled>Seleccione una opción</option>
                         <option value="F">F</option>
                         <option value="M">M</option>
-                    </select>
-                    <button type="button" id="btn_registro" class="col-8 mx-auto btn btn-success mt-3">Registrar</button>
+                    </ons-select>
+                    <ons-button id="btn_registro" class="col-8 mx-auto btn btn-success mt-3">Registrar</ons-button>
                 </section>
             </ons-page>
         </template>
