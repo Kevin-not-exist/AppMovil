@@ -1,107 +1,159 @@
-<!DOCTYPE html>
-
 <html>
-    <head>
-        <title>Salud médica</title>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.1/css/bootstrap.min.css" integrity="sha384-VCmXjywReHh4PwowAiWNagnWcLhlEJLA5buUprzK8rxFgeH0kww/aWY76TfkUoSX" crossorigin="anonymous">
-        <link href="css/estilos.css" rel="stylesheet" type="text/css"/>
-        <script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
-        <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
-        <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
-        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.1/js/bootstrap.min.js" integrity="sha384-XEerZL0cuoUbHE4nZReLT7nx9gQrQreJekYhJD9WNWhH8nEW+0c5qq7aIo2Wl30J" crossorigin="anonymous"></script>
-        <script src="js/jquery.js"></script>
-        <script src="js/codigo.js"></script>
-        <link rel="stylesheet" href="https://unpkg.com/onsenui/css/onsenui.css">
-        <link rel="stylesheet" href="https://unpkg.com/onsenui/css/onsen-css-components.min.css">
-        <script src="https://unpkg.com/onsenui/js/onsenui.min.js"></script>
-    </head>
-    <body>
-        <ons-navigator swipeable id="nav" page="t_registro"></ons-navigator>
-        <template id="t_login">
-            <ons-page id="p_login">
-                <section class="row text-center mx-auto container">
-                    <h1 class="col-12">Login</h1>
-                    <input type="email" id="txt_email_login" required placeholder="E-mail" class="col-8 mx-auto form-control my-1" required>
-                    <input type="password" id="txt_pass_login" required placeholder="Contraseña" class="col-8 mx-auto form-control my-2" required>
-                    <label for="select_personal" class="col-5">Personal</label>
-                    <select id="select_personal" class="col-5" required>
-                        <option value="">Seleccione una opción</option>
-                        <option value="U">Usuario</option>
-                        <option value="D">Doctor</option>
-                    </select>
-                    <button type="button" id="btn_no_registrado" class="col-4 offset-4 my-3">¿No estas registrado?</button>
-                    <button type="button" id="btn_login" class="col-8 mx-auto btn btn-success mt-2">LogIn</button>
-                </section>
-            </ons-page>
-        </template>
 
-        <template id="t_registro">
-            <ons-page id="p_registro">
-                <section class="row text-center mx-auto container my-5 py-5">
-                    <h1 class="col-12">Registro de usuario</h1>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>App Movil</title>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"
+        integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css"> -->
+    <link rel="stylesheet" href="https://unpkg.com/onsenui/css/onsenui.css">
+    <link rel="stylesheet" href="https://unpkg.com/onsenui/css/onsen-css-components.min.css">
+    <script src="https://unpkg.com/onsenui/js/onsenui.min.js"></script>
+    <link rel="stylesheet" href="css/styles.css">
+    <script src="js/functions.js"></script>
+</head>
 
-                    <input type="text" id="txt_nombre" required placeholder="Nombre" class="col-8 mx-auto form-control my-2" required value="Kevin">
-                    <input type="text" id="txt_apellido" required placeholder="Apellido" class="col-8 mx-auto form-control my-2" required value="Devotto">
-                    <input type="text" id="txt_documento" required placeholder="Documento" class="col-8 mx-auto form-control my-2" required value="5155698699">
-                    <input type="password" id="txt_pass" required placeholder="Contraseña" class="col-8 mx-auto form-control my-2" required value="753">
-                    <input type="password" id="txt_pass_repeat" required placeholder="Repita la contraseña" class="col-8 mx-auto form-control my-2" required value="753">
-                    <input type="email" id="txt_email" required placeholder="E-mail" class="col-8 mx-auto form-control my-2" required>
-                    <input type="text" id="txt_telefono" required placeholder="Teléfono" class="col-8 mx-auto form-control my-2" required value="099112544">
-                    <input type="text" id="txt_direccion" required placeholder="Dirección" class="col-8 mx-auto form-control my-2" required value="not exist 404">
-                    <label for="select_genero" class="col-5 my-2">Genero</label>
-                    <ons-select id="select_genero" class="col-5" required>
-                        <option value="" selected disabled>Seleccione una opción</option>
-                        <option value="F">F</option>
-                        <option value="M">M</option>
+<body>
+    <ons-navigator id="nav" page="t_registro"></ons-navigator>
+    <template id="t_infolocal">
+        <ons-page>
+            <script>
+                ons.getScriptPage().onShow =  function(){
+                    //tomar el parámetro que me envian desde click .listado_locales.
+                    const id_local = this.data.id;
+                    url = `http://api.marcelocaiafa.com/local?id=${id_local}`;
+                    $.ajax({
+                        url: url,
+                        type: "GET",
+                        dataType: "json",
+                        success: function(local){
+                            let item = "";
+                                item = `
+                                <ons-card>
+                                    <img src="http://images.marcelocaiafa.com/local/${id_local}.jpg" alt="Onsen UI" style="width: 100%">
+                                    <div class="title">
+                                        <h3>${local.nombre}</h3>
+                                    </div>
+                                    <div class="content">
+                                        <p>${local.telefono}</p>
+                                        <p>${local.descripcion}</p>
+                                    </div>
+                                </ons-card>`
+                                $("#l_local").append(item);
+                        }
+                    });
+                }
+            </script>
+                <ons-list id="l_local"></ons-list>
+            <section>
+
+            </section>
+        </ons-page>
+    </template>
+
+    <template id="t_listado">
+        <ons-page id="p_listado">
+            <script>
+                ons.getScriptPage().onInit = function () {
+                    //se ejecuta cuando se crea la pagina (única vez). 
+                    //eventos javascript por ejemplo on click.
+                    
+                    $(document).on("click", ".listado_locales", function(){
+                        const id = $(this).data("id");
+                        //request a API con este id para obtener todos los datos del local.
+                        //const url = `http://api.marcelocaiafa.com/local/${id}`;
+                        //alert(url);
+                        nav.pushPage("t_infolocal", {data:{
+                            id:id
+                        }});
+                    });
+                }
+                ons.getScriptPage().onShow = function () {
+
+                    //cada vez que entro a esta pagina.
+                    //por ejemplo invocar api con listado de locales.
+
+                    let usuario = sessionStorage.getItem("usuario");
+                    usuario = JSON.parse(usuario);
+                    $("#saludo").html(`Hola <strong> ${usuario.nombre} </strong>`);
+                    const url = "http://api.marcelocaiafa.com/local";
+                    $.ajax({
+                        url: url,
+                        type: "GET",
+                        dataType: "json",
+                        success: function (locales) {
+                            let item = "";
+                            $.each(locales.descripcion, function(key, local){
+                                item = `<ons-list-item modifier = "chevron longdivider" class="listado_locales" data-id = '${local.id}'  tappable tap-background-color="#3ED47A">
+                                        <div class="left">
+                                            <img class="list-item__thumbnail" src="http://images.marcelocaiafa.com/local/${local.imagen}">
+                                        </div>
+                                        <div class="center">
+                                            <span class="list-item__title">${local.nombre}</span><span class="list-item__subtitle">${local.telefono}</span>
+                                        </div>
+                                        </ons-list-item>`;
+                                $("#l_lista").append(item);
+                            });
+                        },
+                        error: function (xml_request, err, status) {
+                            ons.notification.toast(xml_request.responseJSON.descripcion, {
+                                "timeout": 3000
+                            });
+                        }
+                    });
+                }
+            </script>
+            <section>
+                <h1>Listado de locales</h1>
+                <p id="saludo"></p>
+                <ons-list id="l_lista"></ons-list>
+            </section>
+        </ons-page>
+    </template>
+
+    <template id="t_registro">
+        <ons-page id="p_registro">
+            <section>
+                <h1>Registro de usuario</h1>
+                <label for="nombre">Nombre</label>
+                <p><input type="text" class="text-input text-input--material" id="nombre" placeholder="Ingrese nombre" value="Kevin">
+                </p>
+                <label for="apellido">Apellido</label>
+                <p><input type="text" class="text-input text-input--material" id="apellido" placeholder="Ingrese apellido" value="Devotto"></p>
+                <label for="email">Email</label>
+                <p><input type="text" class="text-input text-input--material" id="email" placeholder="Ingrese email">
+                </p>
+                <label for="pwd">Contrase&ntilde;a</label>
+                <p><input type="password" class="text-input text-input--material" id="pwd" value="753"></p>
+                <label for="repwd">Re contrase&ntilde;a</label>
+                <p><input type="password" class="text-input text-input--material" id="repwd" value="753"></p>
+                <label for="telefono">Teléfono</label>
+                <p><input type="text" class="text-input text-input--material" id="telefono" value="099112233"></p>
+                <label for="documento">Documento</label>
+                <p><input type="text" class="text-input text-input--material" id="documento"></p>
+                <p>
+                    <ons-select id="genero">
+                        <option value="">Seleccione una opci&oacute;n</option>
+                        <option value="M">Masc</option>
+                        <option value="F">Fem</option>
                     </ons-select>
-                    <ons-button id="btn_registro" class="col-8 mx-auto btn btn-success mt-3">Registrar</ons-button>
-                </section>
-            </ons-page>
-        </template>
+                </p>
+                <p>
+                    <ons-button id="btn_registro">Registrarse</ons-button>
+                </p>
+            </section>
+        </ons-page>
+    </template>
 
-        <template id="t_info_medico">
-            <ons-page id="p_info_medico">
-                <section>
-                    <nav class="navbar navbar-expand-lg navbar-light bg-light row">
-                        <a class="navbar-brand ml-2 col-10" href="#">Salud Médica</a>
-                        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                          <span class="navbar-toggler-icon"></span>
-                        </button>
-                      
-                        <div class="collapse navbar-collapse col-2" id="navbarSupportedContent">
-                          <ul class="navbar-nav mr-auto">
-                            <li class="nav-item">
-                              <a class="nav-link mx-3" href="#">Login</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link mx-3" href="#">Registro</a>
-                              </li>
-                          </ul>
-                        </div>
-                      </nav>
-                      <h1 class="text-center">Información de profesionales médicos</h1>
-                </section>
+    <template id="t_info_medico">
+        <ons-page id="p_prueba">
+            <section>
+                <h1>Hola</h1>
+            </section>
+        </ons-page>
+    </template>
+</body>
 
-                <section id="s_list_medico"></section>
-            </ons-page>
-        </template>
-
-        <template id="t_reserva_medica">
-            <ons-page id="p_reserva_medica">
-                <section class="row text-center mx-auto container my-5 py-5">
-                    <h1 class="col-12">Reserva médica</h1>
-                    <label for="fecha_reserva_medica" class="col-1">Fecha:</label>
-                    <input type="date" id="fecha_reserva_medica" class="col-2">
-
-                    <label for="hora_reserva_medica" class="col-1 offset-1">Hora:</label>
-                    <input id="hora_reserva_medica" type="text" class="col-2">
-
-                    <label for="medico_reserva_medica" class="col-1 offset-1">Médico:</label>
-                    <select id="select_reserva_medica" class="col-2"></select>
-                </section>
-            </ons-page>
-        </template>
-    </body>
 </html>
