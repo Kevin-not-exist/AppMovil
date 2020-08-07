@@ -16,7 +16,7 @@
 </head>
 
 <body>
-    <ons-navigator id="nav" page="t_registro"></ons-navigator>
+    <ons-navigator id="nav" page="t_login"></ons-navigator>
     <template id="t_infolocal">
         <ons-page>
             <script>
@@ -113,6 +113,29 @@
         </ons-page>
     </template>
 
+    <template id="t_login">
+        <ons-page id="p_login">
+            <section>
+                <h1>Login de usuario</h1>
+                <label for="email_login">Email</label>
+                <p><input type="text" class="text-input text-input--material" id="email_login" placeholder="Ingrese email"></p>
+                <label for="pwd_login">Contrase&ntilde;a</label>
+                <p><input type="password" class="text-input text-input--material" id="pwd_login" placeholder="Ingrese contraseña"></p>
+                <p>
+                    <ons-select id="tipo_login">
+                        <option value="">Seleccione una opción</option>
+                        <option value="U">Usuario</option>
+                        <option value="M">Médico</option>
+                    </ons-select>
+                </p>
+                <p>
+                    <ons-button id="btn_login">Login</ons-button>
+                </p>
+            </section>
+        </ons-page>
+    </template>
+
+
     <template id="t_registro">
         <ons-page id="p_registro">
             <section>
@@ -126,13 +149,13 @@
                 <p><input type="text" class="text-input text-input--material" id="email" placeholder="Ingrese email">
                 </p>
                 <label for="pwd">Contrase&ntilde;a</label>
-                <p><input type="password" class="text-input text-input--material" id="pwd" value="753"></p>
+                <p><input type="password" class="text-input text-input--material" id="pwd" placeholder="Ingrese contraseña" value="753"></p>
                 <label for="repwd">Re contrase&ntilde;a</label>
-                <p><input type="password" class="text-input text-input--material" id="repwd" value="753"></p>
+                <p><input type="password" class="text-input text-input--material" id="repwd" placeholder="Repita la contraseña" value="753"></p>
                 <label for="telefono">Teléfono</label>
-                <p><input type="text" class="text-input text-input--material" id="telefono" value="099112233"></p>
+                <p><input type="text" class="text-input text-input--material" id="telefono" placeholder="Teléfono" value="099112233"></p>
                 <label for="documento">Documento</label>
-                <p><input type="text" class="text-input text-input--material" id="documento"></p>
+                <p><input type="text" class="text-input text-input--material" id="documento" placeholder="De 7 a 8 digitos..."></p>
                 <p>
                     <ons-select id="genero">
                         <option value="">Seleccione una opci&oacute;n</option>
@@ -150,7 +173,7 @@
     <template id="t_info_medico">
         <ons-page id="p_prueba">
             <section>
-                <h1>Hola</h1>
+                <h1>Información de profesionales médicos</h1>
             </section>
         </ons-page>
     </template>
