@@ -2,3 +2,13 @@ section{
     padding: 8px;
     width: 80%;
 }
+
+#btn_no_registrado{
+    background-color: rgba(255, 255, 255, 0);
+    color: black;
+    border: none;
+}
+
+#btn_no_registrado:hover{
+    color: red;
+}

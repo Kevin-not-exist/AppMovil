@@ -4,8 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>App Movil</title>
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"
-        integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css"> -->
     <link rel="stylesheet" href="https://unpkg.com/onsenui/css/onsenui.css">
@@ -129,6 +128,9 @@
                     </ons-select>
                 </p>
                 <p>
+                    <ons-button id="btn_no_registrado">¿No estas registrado?</ons-button>
+                </p>
+                <p>
                     <ons-button id="btn_login">Login</ons-button>
                 </p>
             </section>
@@ -170,11 +172,82 @@
         </ons-page>
     </template>
 
+   <!--Navegación Usuario-->
+   <template id="t_navegacion_usuario">
+    <ons-page id="p_navegacion_usuario">
+        <ons-toolbar>
+            <div class="center">
+              <ons-segment id="segment" tabbar-id="tabbar" style="width: 100%">
+                <button>Page 1</button>
+                <button>Page 2</button>
+                <button>Page 3</button>
+              </ons-segment>
+            </div>
+          </ons-toolbar>
+        <ons-tabbar id="tabbar">
+            <ons-tab page="t_info_medico" active></ons-tab>
+            <ons-tab page="t_medico_favorito"></ons-tab>
+            <ons-tab page="t_reserva_medica"></ons-tab>
+          </ons-tabbar>
+    </ons-page>
+   </template>
+
+    <!-- Información de profesionales médicos -->
     <template id="t_info_medico">
         <ons-page id="p_prueba">
             <section>
                 <h1>Información de profesionales médicos</h1>
             </section>
+        </ons-page>
+    </template>
+
+    <!-- Reserva médica -->
+    <template id="t_reserva_medica">
+        <ons-page id="p_reserva_medica">
+            <section>
+                <h1>Reserva médica</h1>
+            </section>
+        </ons-page>
+    </template>
+
+    <!-- Médicos favoritos -->
+    <template id="t_medico_favorito">
+        <ons-page id="p_medico_favorito">
+            <section>
+                <h1>Médicos favoritos</h1>
+            </section>
+        </ons-page>
+    </template>
+
+    <!--Navegación Médico-->
+   <template id="t_navegacion_medico">
+    <ons-page id="p_navegacion_medico">
+        <ons-toolbar>
+            <div class="center">
+              <ons-segment id="segment" tabbar-id="tabbar_medico" style="width: 100%">
+                <button>Page 1</button>
+                <button>Page 2</button>
+              </ons-segment>
+            </div>
+          </ons-toolbar>
+        <ons-tabbar id="tabbar_medico">
+            <ons-tab page="t_historial_consulta_medica" active></ons-tab>
+            <ons-tab page="t_nota_consulta_medica"></ons-tab>
+          </ons-tabbar>
+    </ons-page>
+   </template>
+
+    <!--Historial de consultas médicas-->
+    <template id="t_historial_consulta_medica">
+        <ons-page id="p_historial_consulta_medica">
+
+        </ons-page>
+    </template>
+
+    <!--Nota consulta médica-->
+    <template id="t_nota_consulta_medica">
+        <ons-page id="p_nota_consulta_medica">
+
         </ons-page>
     </template>
 </body>

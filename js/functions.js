@@ -49,16 +49,15 @@ $(document).ready(function(){
                      });
                     let usuario = respuesta.usuario;
                     usuario     = JSON.stringify(usuario);
-                    sessionStorage.setItem("usuario", usuario);
-                    ons.notification.toast("El usuario se registro correctamente", {"timeout":3000});
-                    //redireccionar a listado de locales.
+                    localStorage.setItem("usuario", usuario);
+                    ons.notification.toast("El usuario ingreso correctamente", {"timeout":3000});
                     const nav = document.getElementById("nav");
                     nav.pushPage("t_info_medico");
                 },
                 error:function(respuesta_error, err, status){
                     console.log(err);
                     console.log(status);
-                    ons.notification.toast(respuesta_error.responseText, {"timeout":3000});
+                    ons.notification.toast(respuesta_error.responseJSON.error, {"timeout":3000});
                 }
             });
         }
@@ -102,21 +101,30 @@ $(document).ready(function(){
                      });
                     let usuario = respuesta.usuario;
                     usuario     = JSON.stringify(usuario);
-                    sessionStorage.setItem("usuario", usuario);
-                    ons.notification.toast("El usuario se registro correctamente", {"timeout":3000});
-                    //redireccionar a listado de locales.
-                    const nav = document.getElementById("nav");
-                    nav.pushPage("t_info_medico");
+                    localStorage.setItem("usuario", usuario);
+                    ons.notification.toast("El usuario ingreso correctamente", {"timeout":3000});
+                    nav = document.getElementById("nav");
+                    //si es usuario
+                    if(tipo_login == "U"){
+                        nav.pushPage("t_navegacion_usuario");
+                    }else{
+                        nav.pushPage("t_navegacion_medico");
+                    }
                 },
                 error:function(respuesta_error, err, status){
                     console.log(err);
                     console.log(status);
-                    ons.notification.toast(respuesta_error.responseText, {"timeout":3000});
+                    ons.notification.toast(respuesta_error.responseJSON.error, {"timeout":3000});
                 }
             });
         }
         catch(e){
             ons.notification.toast(e, {"timeout":3000});
         }
+    });
+
+    $("#btn_no_registrado").on("click", function(){
+        nav = document.getElementById("nav");
+        nav.pushPage("t_registro");
     });
 });
