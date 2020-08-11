@@ -17,102 +17,6 @@
 
 <body>
     <ons-navigator id="nav" page="t_login"></ons-navigator>
-    <template id="t_infolocal">
-        <ons-page>
-            <script>
-                ons.getScriptPage().onShow =  function(){
-                    //tomar el parámetro que me envian desde click .listado_locales.
-                    const id_local = this.data.id;
-                    url = `http://api.marcelocaiafa.com/local?id=${id_local}`;
-                    $.ajax({
-                        url: url,
-                        type: "GET",
-                        dataType: "json",
-                        success: function(local){
-                            let item = "";
-                                item = `
-                                <ons-card>
-                                    <img src="http://images.marcelocaiafa.com/local/${id_local}.jpg" alt="Onsen UI" style="width: 100%">
-                                    <div class="title">
-                                        <h3>${local.nombre}</h3>
-                                    </div>
-                                    <div class="content">
-                                        <p>${local.telefono}</p>
-                                        <p>${local.descripcion}</p>
-                                    </div>
-                                </ons-card>`
-                                $("#l_local").append(item);
-                        }
-                    });
-                }
-            </script>
-                <ons-list id="l_local"></ons-list>
-            <section>
-
-            </section>
-        </ons-page>
-    </template>
-
-    <template id="t_listado">
-        <ons-page id="p_listado">
-            <script>
-                ons.getScriptPage().onInit = function () {
-                    //se ejecuta cuando se crea la pagina (única vez). 
-                    //eventos javascript por ejemplo on click.
-                    
-                    $(document).on("click", ".listado_locales", function(){
-                        const id = $(this).data("id");
-                        //request a API con este id para obtener todos los datos del local.
-                        //const url = `http://api.marcelocaiafa.com/local/${id}`;
-                        //alert(url);
-                        nav.pushPage("t_infolocal", {data:{
-                            id:id
-                        }});
-                    });
-                }
-                ons.getScriptPage().onShow = function () {
-
-                    //cada vez que entro a esta pagina.
-                    //por ejemplo invocar api con listado de locales.
-
-                    let usuario = sessionStorage.getItem("usuario");
-                    usuario = JSON.parse(usuario);
-                    $("#saludo").html(`Hola <strong> ${usuario.nombre} </strong>`);
-                    const url = "http://api.marcelocaiafa.com/local";
-                    $.ajax({
-                        url: url,
-                        type: "GET",
-                        dataType: "json",
-                        success: function (locales) {
-                            let item = "";
-                            $.each(locales.descripcion, function(key, local){
-                                item = `<ons-list-item modifier = "chevron longdivider" class="listado_locales" data-id = '${local.id}'  tappable tap-background-color="#3ED47A">
-                                        <div class="left">
-                                            <img class="list-item__thumbnail" src="http://images.marcelocaiafa.com/local/${local.imagen}">
-                                        </div>
-                                        <div class="center">
-                                            <span class="list-item__title">${local.nombre}</span><span class="list-item__subtitle">${local.telefono}</span>
-                                        </div>
-                                        </ons-list-item>`;
-                                $("#l_lista").append(item);
-                            });
-                        },
-                        error: function (xml_request, err, status) {
-                            ons.notification.toast(xml_request.responseJSON.descripcion, {
-                                "timeout": 3000
-                            });
-                        }
-                    });
-                }
-            </script>
-            <section>
-                <h1>Listado de locales</h1>
-                <p id="saludo"></p>
-                <ons-list id="l_lista"></ons-list>
-            </section>
-        </ons-page>
-    </template>
-
     <template id="t_info_especialista">
         <ons-page id="p_info_especialista">
             <script>
@@ -279,14 +183,116 @@
         </ons-page>
     </template>
 
+    <ons-modal direction="up" id="cargando">
+        <div style="text-align: center">
+            <p>
+                <ons-icon icon="md-spinner" size="28px" spin></ons-icon> <span id="txt_cargando"></span>
+            </p>
+        </div>
+    </ons-modal>
+    <ons-splitter>
+        <ons-splitter-side id="menu" side="left" width="220px" collapse swipeable>
+            <ons-page>
+                <ons-list>
+                    <ons-list-item onclick="fn.load('t_especialidades_disponibles','p_especialidades_disponibles')" modifier="chevron" tappabletap-background-color="#3ED47A">
+                        <ons-icon icon="fa-store" size="20px" style="color:#3ED47A"></ons-icon>&nbsp;Especialidades Disponibles
+                    </ons-list-item>
+                    <ons-list-item id="btn_logout" modifier="chevron" tappable tap-background-color="#3ED47A">
+                        <ons-icon icon="fa-sign-out-alt" size="20px"></ons-icon>&nbsp;Cerrar Sesi&oacute;n
+                    </ons-list-item>
+                    <ons-list-item onclick="fn.load('menu')" tappable>
+                        Salir
+                    </ons-list-item>
+                </ons-list>
+            </ons-page>
+        </ons-splitter-side>
+        <ons-splitter-content id="content">
+            <ons-navigator id="nav" page="t_login"></ons-navigator>
+        </ons-splitter-content>
+    </ons-splitter>
+
     <template id="t_login">
         <ons-page id="p_login">
+            <script>
+                ons.getScriptPage().onShow = function () {
+                    if (localStorage.getItem("email")) {
+                        const recordar = document.getElementById('swt_recordar_password');
+
+                        //si hay usuario grabado en localStorage, dejo marcado switch y hago login.
+                        recordar.setAttribute('checked', 'true');
+                        const email = localStorage.getItem("email");
+                        const pwd = localStorage.getItem("password");
+                        login(email, pwd);
+                    }
+                }
+
+                ons.getScriptPage().onInit = function () {
+
+                    $(document).on("click", "#btn_login", function () {
+                        try {
+                            const email = $("#inp_login_usuario").val();
+                            const pwd = $("#inp_login_pwd").val();
+                            const tipo = $("#tipo_login").val();
+                            if (!email) {
+                                throw "Ingrese email para continuar";
+                            }
+                            if (!pwd) {
+                                throw "Ingrese contraseña para continuar";
+                            }
+                            if (!tipo) {
+                                throw "Ingrese tipo para continuar";
+                            }
+                            login(email, pwd, tipo);
+                        }
+                        catch (e) {
+                            ons.notification.toast(e, { "timeout": 3000 });
+                        }
+                    });
+
+                    $(document).on("click", "#btn_login_registro", function () {
+                        //Redirecciono a registro
+                        fn.load("t_registro", "p_registro");
+                    });
+
+                    $(document).on("click", "#mostrar_pwd", function () {
+                        //si el elemento tiene como atributo icon fa-eye lo cambio a fa-eye-slash y viceversa. 
+                        if ($(this).attr("icon") == 'fa-eye') {
+                            $(this).attr("icon", "fa-eye-slash");
+                            //cambio tipo de input a password.
+                            $("#inp_login_pwd").attr("type", "password");
+                        }
+                        else {
+                            //ver password
+                            $(this).attr("icon", "fa-eye");
+                            //cambio tipo de input a input.
+                            $("#inp_login_pwd").attr("type", "input");
+                        }
+                    });
+                    $(document).on("click", "#swt_recordar_password", function () {
+                        const recordar = document.getElementById('swt_recordar_password');
+                        if (recordar.checked) {
+                            const email = $("#inp_login_usuario").val();
+                            const pwd = $("#inp_login_pwd").val();
+                            //grabo el localStorage.
+                            localStorage.setItem("email", email);
+                            localStorage.setItem("password", pwd);
+                        }
+                        else {
+                            //remuevo de localStorage.
+                            localStorage.removeItem("email");
+                            localStorage.removeItem("password");
+                        }
+                    });
+                }
+            </script>
             <section>
-                <h1>Login de usuario</h1>
-                <label for="email_login">Email</label>
-                <p><input type="text" class="text-input text-input--material" id="email_login" placeholder="Ingrese email"></p>
-                <label for="pwd_login">Contrase&ntilde;a</label>
-                <p><input type="password" class="text-input text-input--material" id="pwd_login" placeholder="Ingrese contraseña"></p>
+                <h1>Login de Usuario</h1>
+                <label for="inp_login_usuario"></label>
+                <p><input class="text-input text-input--material" type="text" id="inp_login_usuario" placeholder="Ingrese usuario"></p>
+
+                <label for="inp_login_pwd"></label>
+                <p><input class="text-input text-input--material" type="password" id="inp_login_pwd"placeholder="Ingrese contrase&ntilde;a">
+                    <ons-icon icon="fa-eye-slash" id="mostrar_pwd"></ons-icon>
                 <p>
                     <ons-select id="tipo_login">
                         <option value="">Seleccione una opción</option>
@@ -296,7 +302,12 @@
                 </p>
                 <p>
                     <ons-button id="btn_login">Login</ons-button>
+                    <ons-button modifier="outline" id="btn_login_registro">Registro</ons-button>
                 </p>
+                <ons-switch modifier="material" id="swt_recordar_password" input-id="swt_recordar_password2">
+                </ons-switch>
+                <!-- Si hace click sobre el texto Recordar contraseña, activar switch. -->
+                <label for="swt_recordar_password2">Recordar contrase&ntilde;a</label>
             </section>
         </ons-page>
     </template>
