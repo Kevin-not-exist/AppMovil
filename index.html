@@ -1,10 +1,11 @@
-<html>
+<html leng="es">
 
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>App Movil</title>
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js" integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"
+        integrity="sha256-9/aliU8dGd2tb6OSsuzixeV4y/faTqgFtohetphbbj0=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
     <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css"> -->
     <link rel="stylesheet" href="https://unpkg.com/onsenui/css/onsenui.css">
@@ -112,6 +113,172 @@
         </ons-page>
     </template>
 
+    <template id="t_info_especialista">
+        <ons-page id="p_info_especialista">
+            <script>
+                ons.getScriptPage().onShow = function(){
+                    const especialista = this.data.id;
+                    const url= `https://ort-api.herokuapp.com/medicos/${especialista}`;
+                    $.ajax({
+                        url:url,
+                        data: "GET",
+                        dataType: "json",
+                        headers:{
+                            'Authorization':'Bearer eyJhbGciOiJIUzI1NiJ9.eyJpZCI6IjVmMThiODg1NmFhNTVlMDAxNzg2OTM2MSIsInRpcG8iOiJVIn0.Q5dLLw34WiglquYv1Li6OGOcMdAZQHpBPq_PlAnAmmc'
+                        },
+                        success:function(informacion){
+                            let item = "";
+                                item = `
+                                <ons-card>
+                                    <img src="https://ort-api.herokuapp.com/imagenes/medicos/${informacion._id}.png" alt="Onsen UI" style="width: 100%">
+                                    <div class="title">
+                                        <h3>${informacion.nombre} ${informacion.apellido}</h3>
+                                    </div>
+                                    <div class="content">
+                                        <p>Puntuaci&oacute;n: ${informacion.puntuacion}</p>
+                                        <p>Promedio: ${informacion.promedio}</p>
+                                        <p>${informacion.email}</p>
+                                    </div>
+                                </ons-card>`
+                                $("#info_especialista").append(item);
+                        },
+                        error:function (xml_request, err, status) {
+                            ons.notification.toast(xml_request.responseJSON.descripcion, {
+                                "timeout": 3000
+                            });
+                        }
+
+                    })
+                }
+            </script>
+
+            <section>
+                <ons-list id="info_especialista"></ons-list>
+            </section>
+        </ons-page>
+    </template>
+
+    <template id="t_especialistas">
+        <ons-page id="p_especialistas">
+            <script>
+                ons.getScriptPage().onInit = function(){
+
+                    $(document).on("click", ".especialista", function(){
+                        const id = $(this).data("id");
+                        nav.pushPage("t_info_especialista", {data:{
+                            id:id
+                        }})
+                    })
+                }
+                ons.getScriptPage().onShow=function(){
+
+                    const especialidad = this.data.id;
+                    const url= `https://ort-api.herokuapp.com/medicos/especialidad/?buscar=${especialidad}`
+                    $.ajax({
+                        url:url,
+                        data: "GET",
+                        dataType: "json",
+                        headers: {
+                            'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJpZCI6IjVmMThiODg1NmFhNTVlMDAxNzg2OTM2MSIsInRpcG8iOiJVIn0.Q5dLLw34WiglquYv1Li6OGOcMdAZQHpBPq_PlAnAmmc '
+                        },
+                        success:function(especialistas){
+                            let item="";
+                            $.each(especialistas, function(i, especialista){
+                                item = `<ons-list-item modifier = "chevron longdivider" class="especialista" data-id = '${especialista._id}'  tappable tap-background-color="#3ED47A">
+                                        <div class="left">
+                                            <img class="list-item__thumbnail" src="https://ort-api.herokuapp.com/imagenes/medicos/${especialista._id}.png">
+                                        </div>
+                                        <div class="center">
+                                            <span class="list-item__title">${especialista.nombre}</span><span class="list-item__subtitle">${especialista.apellido}</span>
+                                        </div>
+                                        </ons-list-item>`;
+                                $("#listado_especialistas").append(item);
+                            });
+                        },
+                        error: function (xml_request, err, status) {
+                            ons.notification.toast(xml_request.responseJSON.descripcion, {
+                                "timeout": 3000
+                            });
+                        }
+                    })
+                }
+
+            </script>
+            <section>
+                <ons-list id="listado_especialistas">
+                <ons-list-title>Listado de especialistas</ons-list-title>
+                </ons-list>
+            </section>
+        </ons-page>
+    </template>
+
+    <template id="t_especialidades_disponibles">
+        <ons-page id="p_especialidades_disponibles">
+            <script>
+                ons.getScriptPage().onInit = function(){
+
+                    $(document).on("click", ".l_esp_disponibles", function(){
+                        const id = $(this).data("id");
+                        nav.pushPage("t_especialistas", {data:{
+                            id:id
+                        }})
+                    })
+                }
+            </script>
+
+            <section>
+                <h1>Especialidades</h1>
+                <ons-list>
+                    <ons-list-item class="l_esp_disponibles" data-id = "Cardiolog&iacute;a">
+                        <div class="center">
+                            <span>Cardiolog&iacute;a</span>
+                        </div>
+                    </ons-list-item>
+                    <ons-list-item class="l_esp_disponibles" data-id = "Oftalmolog&iacute;a">
+                        <div class="center">
+                            <span>Oftalmolog&iacute;a</span>
+                        </div>
+                    </ons-list-item>
+                    <ons-list-item class="l_esp_disponibles" data-id = "Neumolog&iacute;a">
+                        <div class="center">
+                            <span>Neumolog&iacute;a</span>
+                        </div>
+                    </ons-list-item>
+                    <ons-list-item class="l_esp_disponibles" data-id = "Reumatolog&iacute;a">
+                        <div class="center">
+                            <span>Reumatolog&iacute;a</span>
+                        </div>
+                    </ons-list-item>
+                    <ons-list-item class="l_esp_disponibles" data-id = "Psiquiatr&iacute;a">
+                        <div class="center">
+                            <span>Psiquiatr&iacute;a</span>
+                        </div>
+                    </ons-list-item>
+                    <ons-list-item class="l_esp_disponibles" data-id = "Geriatr&iacute;a">
+                        <div class="center">
+                            <span>Geriatr&iacute;a</span>
+                        </div>
+                    </ons-list-item>
+                    <ons-list-item class="l_esp_disponibles" data-id = "Neurocirug&iacute;a">
+                        <div class="center">
+                            <span>Neurocirug&iacute;a</span>
+                        </div>
+                    </ons-list-item>
+                    <ons-list-item class="l_esp_disponibles" data-id = "Oncolog&iacute;a">
+                        <div class="center">
+                            <span>Oncolog&iacute;a</span>
+                        </div>
+                    </ons-list-item>
+                    <ons-list-item class="l_esp_disponibles" data-id = "Traumatolog&iacute;a">
+                        <div class="center">
+                            <span>Traumatolog&iacute;a</span>
+                        </div>
+                    </ons-list-item>
+                </ons-list>
+            </section>
+        </ons-page>
+    </template>
+
     <template id="t_login">
         <ons-page id="p_login">
             <section>
@@ -126,9 +293,6 @@
                         <option value="U">Usuario</option>
                         <option value="M">Médico</option>
                     </ons-select>
-                </p>
-                <p>
-                    <ons-button id="btn_no_registrado">¿No estas registrado?</ons-button>
                 </p>
                 <p>
                     <ons-button id="btn_login">Login</ons-button>
@@ -169,85 +333,6 @@
                     <ons-button id="btn_registro">Registrarse</ons-button>
                 </p>
             </section>
-        </ons-page>
-    </template>
-
-   <!--Navegación Usuario-->
-   <template id="t_navegacion_usuario">
-    <ons-page id="p_navegacion_usuario">
-        <ons-toolbar>
-            <div class="center">
-              <ons-segment id="segment" tabbar-id="tabbar" style="width: 100%">
-                <button>Page 1</button>
-                <button>Page 2</button>
-                <button>Page 3</button>
-              </ons-segment>
-            </div>
-          </ons-toolbar>
-        <ons-tabbar id="tabbar">
-            <ons-tab page="t_info_medico" active></ons-tab>
-            <ons-tab page="t_medico_favorito"></ons-tab>
-            <ons-tab page="t_reserva_medica"></ons-tab>
-          </ons-tabbar>
-    </ons-page>
-   </template>
-
-    <!-- Información de profesionales médicos -->
-    <template id="t_info_medico">
-        <ons-page id="p_prueba">
-            <section>
-                <h1>Información de profesionales médicos</h1>
-            </section>
-        </ons-page>
-    </template>
-
-    <!-- Reserva médica -->
-    <template id="t_reserva_medica">
-        <ons-page id="p_reserva_medica">
-            <section>
-                <h1>Reserva médica</h1>
-            </section>
-        </ons-page>
-    </template>
-
-    <!-- Médicos favoritos -->
-    <template id="t_medico_favorito">
-        <ons-page id="p_medico_favorito">
-            <section>
-                <h1>Médicos favoritos</h1>
-            </section>
-        </ons-page>
-    </template>
-
-    <!--Navegación Médico-->
-   <template id="t_navegacion_medico">
-    <ons-page id="p_navegacion_medico">
-        <ons-toolbar>
-            <div class="center">
-              <ons-segment id="segment" tabbar-id="tabbar_medico" style="width: 100%">
-                <button>Page 1</button>
-                <button>Page 2</button>
-              </ons-segment>
-            </div>
-          </ons-toolbar>
-        <ons-tabbar id="tabbar_medico">
-            <ons-tab page="t_historial_consulta_medica" active></ons-tab>
-            <ons-tab page="t_nota_consulta_medica"></ons-tab>
-          </ons-tabbar>
-    </ons-page>
-   </template>
-
-    <!--Historial de consultas médicas-->
-    <template id="t_historial_consulta_medica">
-        <ons-page id="p_historial_consulta_medica">
-
-        </ons-page>
-    </template>
-
-    <!--Nota consulta médica-->
-    <template id="t_nota_consulta_medica">
-        <ons-page id="p_nota_consulta_medica">
-
         </ons-page>
     </template>
 </body>
