@@ -130,6 +130,19 @@ $(document).ready(function(){
         }
     });
 
+    function createAlertDialog(){
+        var dialog = document.getElementById('my-alert-dialog');
+
+        if (dialog) {
+            dialog.show();
+          } else {
+            ons.createElement('alert-dialog.html', { append: true })
+              .then(function(dialog) {
+                dialog.show();
+              });
+          }
+    }
+
     //Reserva médica
     $(document).on("click", "#btn_enviar_reserva_medica", function(){
         const fecha   = $("#fecha_reserva_medica").val();
