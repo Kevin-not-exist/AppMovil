@@ -63,7 +63,8 @@ $(document).ready(function(){
         fn.load('t_login','p_login');
     });
     
-    $("#btn_registro").on("click", function(){
+    //Registro
+    $(document).on("click", "#btn_registro", function(){
         const nombre    = $("#nombre").val();
         const apellido  = $("#apellido").val();
         const email     = $("#email").val();
@@ -115,7 +116,56 @@ $(document).ready(function(){
                     usuario     = JSON.stringify(usuario);
                     sessionStorage.setItem("usuario", usuario);
                     ons.notification.toast("El usuario se registro correctamente", {"timeout":3000});
-                    fn.load("t_info_medico","p_info_medico");
+                    fn.load("t_especialidades_disponibles","p_especialidades_disponibles");
+                },
+                error:function(respuesta_error, err, status){
+                    console.log(err);
+                    console.log(status);
+                    ons.notification.toast(respuesta_error.responseText, {"timeout":3000});
+                }
+            });
+        }
+        catch(e){
+            ons.notification.toast(e, {"timeout":3000});
+        }
+    });
+
+    //Reserva médica
+    $(document).on("click", "#btn_enviar_reserva_medica", function(){
+        const fecha   = $("#fecha_reserva_medica").val();
+        const hora    = $("#hora_reserva_medica").val();
+        const medico  = $("#medico_reserva_medica").val();
+        const fechaReserva = fecha+" "+hora;
+        const url     = "https://ort-api.herokuapp.com/reservas/";
+
+        try{
+            if(!fecha){
+                throw "Completar fecha para continuar."
+            }
+            if(!hora){
+                throw "Completar hora para continuar."
+            }
+            if(!medico){
+                throw "Completar médico para continuar."
+            }
+            $.ajax({
+                url:url,
+                type:"POST",
+                dataType:"json",
+                data:JSON.stringify(
+                    {
+                        "fecha": fechaReserva,
+                        "medico": medico,
+                    }
+                ),
+                contentType: 'application/json; charset=utf-8',
+                success:function(respuesta){
+                    $.ajaxSetup({
+                        headers:{
+                            token:respuesta.token
+                        }
+                     });
+                    ons.notification.toast("Reserva médica enviada!", {"timeout":3000});
                 },
                 error:function(respuesta_error, err, status){
                     console.log(err);

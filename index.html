@@ -16,7 +16,6 @@
 </head>
 
 <body>
-    <ons-navigator id="nav" page="t_login"></ons-navigator>
     <template id="t_info_especialista">
         <ons-page id="p_info_especialista">
             <script>
@@ -129,9 +128,13 @@
                     })
                 }
             </script>
-
+            <ons-toolbar>
+                <div class="left">
+                    <ons-toolbar-button icon="fa-bars" onclick="fn.open()"></ons-toolbar-button>
+                </div>
+                <div class="center">Especialidades</div>
+            </ons-toolbar>
             <section>
-                <h1>Especialidades</h1>
                 <ons-list>
                     <ons-list-item class="l_esp_disponibles" data-id = "Cardiolog&iacute;a">
                         <div class="center">
@@ -197,6 +200,9 @@
                     <ons-list-item onclick="fn.load('t_especialidades_disponibles','p_especialidades_disponibles')" modifier="chevron" tappabletap-background-color="#3ED47A">
                         <ons-icon icon="fa-store" size="20px" style="color:#3ED47A"></ons-icon>&nbsp;Especialidades Disponibles
                     </ons-list-item>
+                    <ons-list-item onclick="fn.load('t_reserva_medica','p_reserva_medica')" modifier="chevron" tappabletap-background-color="#3ED47A">
+                        <ons-icon icon="fa-store" size="20px" style="color:#d47a3e"></ons-icon>&nbsp;Reserva médica
+                    </ons-list-item>
                     <ons-list-item id="btn_logout" modifier="chevron" tappable tap-background-color="#3ED47A">
                         <ons-icon icon="fa-sign-out-alt" size="20px"></ons-icon>&nbsp;Cerrar Sesi&oacute;n
                     </ons-list-item>
@@ -230,7 +236,7 @@
 
                     $(document).on("click", "#btn_login", function () {
                         try {
-                            const email = $("#inp_login_usuario").val();
+                            const email = $("#login_usuario").val();
                             const pwd = $("#inp_login_pwd").val();
                             const tipo = $("#tipo_login").val();
                             if (!email) {
@@ -271,7 +277,7 @@
                     $(document).on("click", "#swt_recordar_password", function () {
                         const recordar = document.getElementById('swt_recordar_password');
                         if (recordar.checked) {
-                            const email = $("#inp_login_usuario").val();
+                            const email = $("#login_usuario").val();
                             const pwd = $("#inp_login_pwd").val();
                             //grabo el localStorage.
                             localStorage.setItem("email", email);
@@ -287,8 +293,8 @@
             </script>
             <section>
                 <h1>Login de Usuario</h1>
-                <label for="inp_login_usuario"></label>
-                <p><input class="text-input text-input--material" type="text" id="inp_login_usuario" placeholder="Ingrese usuario"></p>
+                <label for="login_usuario"></label>
+                <p><input class="text-input text-input--material" type="text" id="login_usuario" placeholder="Ingrese usuario"></p>
 
                 <label for="inp_login_pwd"></label>
                 <p><input class="text-input text-input--material" type="password" id="inp_login_pwd"placeholder="Ingrese contrase&ntilde;a">
@@ -318,19 +324,19 @@
             <section>
                 <h1>Registro de usuario</h1>
                 <label for="nombre">Nombre</label>
-                <p><input type="text" class="text-input text-input--material" id="nombre" placeholder="Ingrese nombre" value="Kevin">
+                <p><input type="text" class="text-input text-input--material" id="nombre" placeholder="Ingrese nombre">
                 </p>
                 <label for="apellido">Apellido</label>
-                <p><input type="text" class="text-input text-input--material" id="apellido" placeholder="Ingrese apellido" value="Devotto"></p>
+                <p><input type="text" class="text-input text-input--material" id="apellido" placeholder="Ingrese apellido"></p>
                 <label for="email">Email</label>
                 <p><input type="text" class="text-input text-input--material" id="email" placeholder="Ingrese email">
                 </p>
                 <label for="pwd">Contrase&ntilde;a</label>
-                <p><input type="password" class="text-input text-input--material" id="pwd" placeholder="Ingrese contraseña" value="753"></p>
+                <p><input type="password" class="text-input text-input--material" id="pwd" placeholder="Ingrese contraseña"></p>
                 <label for="repwd">Re contrase&ntilde;a</label>
-                <p><input type="password" class="text-input text-input--material" id="repwd" placeholder="Repita la contraseña" value="753"></p>
+                <p><input type="password" class="text-input text-input--material" id="repwd" placeholder="Repita la contraseña"></p>
                 <label for="telefono">Teléfono</label>
-                <p><input type="text" class="text-input text-input--material" id="telefono" placeholder="Teléfono" value="099112233"></p>
+                <p><input type="text" class="text-input text-input--material" id="telefono" placeholder="Teléfono"></p>
                 <label for="documento">Documento</label>
                 <p><input type="text" class="text-input text-input--material" id="documento" placeholder="De 7 a 8 digitos..."></p>
                 <p>
@@ -342,6 +348,46 @@
                 </p>
                 <p>
                     <ons-button id="btn_registro">Registrarse</ons-button>
+                </p>
+            </section>
+        </ons-page>
+    </template>
+
+    <template id="t_reserva_medica">
+        <ons-page id="p_reserva_medica">
+            <script>
+                $.ajax({
+                        url: "https://ort-api.herokuapp.com/medicos/5f18b47f8b38190017a5818d",
+                        type: "GET",
+                        dataType: "json",
+                        success: function (medico) {
+                            let item = "";
+                            $.each(medico.descripcion, function (key, medico) {
+                                item = `<option value="${medico.id}">${medico.nombre}</option>`;
+                                $("#medico_reserva_medica").append(item);
+                            });
+                        },
+                        error: function (xml_request, err, status) {
+                            ons.notification.toast(xml_request.responseJSON.descripcion, {"timeout": 3000});
+                        },
+                    });
+            </script>
+            <section>
+                <h1>Reserva Médica</h1>
+                <label for="fecha_reserva_medica">Fecha</label>
+                <p><input type="date" id="fecha_reserva_medica"></p>
+                
+                <label for="hora_reserva_medica">Hora</label>
+                <p><input type="time" id="hora_reserva_medica"></p>
+
+                <label for="medico_reserva_medica">Médico</label>
+                <p>
+                    <select id="medico_reserva_medica">
+                        <option value="" selected disabled>Seleccione una opción</option>
+                    </select>
+                </p>
+                <p>
+                    <ons-button id="btn_enviar_reserva_medica">Enviar</ons-button>
                 </p>
             </section>
         </ons-page>
