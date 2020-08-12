@@ -21,6 +21,25 @@
             <script>
                 ons.getScriptPage().onShow = function(){
                     const especialista = this.data.id;
+                    console.log('especialista ' + especialista);
+
+
+                    $(document).on("click", "#btn_reserva_medica", function(){
+                        
+                        var dialog = document.getElementById('my-alert-dialog');
+
+                        if (dialog) {
+                            dialog.show();
+                        } else {
+                            ons.createElement('alert-dialog-reserva', { append: true,data:{
+                            id:especialista
+                        }})
+                            .then(function(dialog) {
+                                dialog.show();
+                            });
+                        }                      
+                    })
+
                     const url= `https://ort-api.herokuapp.com/medicos/${especialista}`;
                     $.ajax({
                         url:url,
@@ -41,24 +60,49 @@
                                         <p>Puntuaci&oacute;n: ${informacion.puntuacion}</p>
                                         <p>Promedio: ${informacion.promedio}</p>
                                         <p>${informacion.email}</p>
+                                        <hr>
+                                        <p><input type="text" id="id_medico_reserva" value="${informacion._id}"></p>
                                     </div>
                                 </ons-card>`
-                                $("#info_especialista").append(item);
+                                $("#info_especialista").html(item);
                         },
                         error:function (xml_request, err, status) {
-                            ons.notification.toast(xml_request.responseJSON.descripcion, {
-                                "timeout": 3000
-                            });
+                            ons.notification.toast(xml_request.responseJSON.descripcion, {"timeout": 3000});
                         }
 
                     })
                 }
             </script>
-
+             <ons-fab position="bottom right">
+                <ons-icon icon="md-plus" id="btn_reserva_medica"></ons-icon>
+              </ons-fab>
             <section>
                 <ons-list id="info_especialista"></ons-list>
             </section>
         </ons-page>
+    </template>
+
+    <template id="alert-dialog-reserva">
+        <ons-alert-dialog id="my-alert-dialog" modifier="rowfooter">
+            <script>
+                    const id =  $("#id_medico_reserva").val();
+                    $("#id_medico").html(id);
+            </script>
+            <div class="alert-dialog-title">Reserva Médica</div>
+          <div class="alert-dialog-content">
+            <label for="fecha_reserva_medica">Fecha</label>
+            <p><input type="date" id="fecha_reserva_medica"></p>
+            
+            <label for="hora_reserva_medica">Hora</label>
+            <p><input type="time" id="hora_reserva_medica"></p>
+
+            <p id="id_medico"></p>
+          </div>
+          <div class="alert-dialog-footer">
+            <ons-alert-dialog-button id="btn_salir_reserva_medica">Cancel</ons-alert-dialog-button>
+            <ons-alert-dialog-button id="btn_enviar_reserva_medica">OK</ons-alert-dialog-button>
+          </div>
+        </ons-alert-dialog>
     </template>
 
     <template id="t_especialistas">
@@ -86,6 +130,7 @@
                         },
                         success:function(especialistas){
                             let item="";
+                            let itemMedico="";
                             $.each(especialistas, function(i, especialista){
                                 item = `<ons-list-item modifier = "chevron longdivider" class="especialista" data-id = '${especialista._id}'  tappable tap-background-color="#3ED47A">
                                         <div class="left">
@@ -107,9 +152,6 @@
                 }
 
             </script>
-             <ons-fab position="bottom right">
-                <ons-icon icon="md-plus" onclick="createAlertDialog()"></ons-icon>
-              </ons-fab>
             <section>
                 <ons-list id="listado_especialistas">
                 <ons-list-title>Listado de especialistas</ons-list-title>
@@ -355,59 +397,6 @@
             </section>
         </ons-page>
     </template>
-
-    <template id="t_reserva_medica">
-        <ons-page id="p_reserva_medica">
-            <script>
-                $.ajax({
-                        url: "https://ort-api.herokuapp.com/medicos/5f18b47f8b38190017a5818d",
-                        type: "GET",
-                        dataType: "json",
-                        success: function (medico) {
-                            let item = "";
-                            $.each(medico.descripcion, function (key, medico) {
-                                item = `<option value="${medico.id}">${medico.nombre}</option>`;
-                                $("#medico_reserva_medica").append(item);
-                            });
-                        },
-                        error: function (xml_request, err, status) {
-                            ons.notification.toast(xml_request.responseJSON.descripcion, {"timeout": 3000});
-                        },
-                    });
-            </script>
-            <section>
-                <h1>Reserva Médica</h1>
-                <label for="fecha_reserva_medica">Fecha</label>
-                <p><input type="date" id="fecha_reserva_medica"></p>
-                
-                <label for="hora_reserva_medica">Hora</label>
-                <p><input type="time" id="hora_reserva_medica"></p>
-
-                <label for="medico_reserva_medica">Médico</label>
-                <p>
-                    <select id="medico_reserva_medica">
-                        <option value="" selected disabled>Seleccione una opción</option>
-                    </select>
-                </p>
-                <p>
-                    <ons-button id="btn_enviar_reserva_medica">Enviar</ons-button>
-                </p>
-            </section>
-        </ons-page>
-    </template>
-
-    <template id="alert-dialog.html">
-        <ons-alert-dialog id="my-alert-dialog" modifier="rowfooter">
-          <div class="alert-dialog-title">Alert</div>
-          <div class="alert-dialog-content">
-            This dialog was created from a template
-          </div>
-          <div class="alert-dialog-footer">
-            <ons-alert-dialog-button onclick="hideAlertDialog()">Cancel</ons-alert-dialog-button>
-            <ons-alert-dialog-button onclick="hideAlertDialog()">OK</ons-alert-dialog-button>
-          </div>
-        </ons-alert-dialog>
-      </template>
 </body>
 
 </html>

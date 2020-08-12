@@ -45,6 +45,7 @@ function login(email, pwd, tipo){
             fn.load("t_especialidades_disponibles", "p_especialidades_disponibles");
         },
         error:function(respuesta_error, err, status){
+            console.log(respuesta_error);
             console.log(err);
             console.log(status);
             ons.notification.toast(respuesta_error.responseText, {"timeout":3000});
@@ -130,24 +131,17 @@ $(document).ready(function(){
         }
     });
 
-    function createAlertDialog(){
-        var dialog = document.getElementById('my-alert-dialog');
-
-        if (dialog) {
-            dialog.show();
-          } else {
-            ons.createElement('alert-dialog.html', { append: true })
-              .then(function(dialog) {
-                dialog.show();
-              });
-          }
-    }
+    $(document).on("click", "#btn_salir_reserva_medica", function(){
+        document
+        .getElementById('my-alert-dialog')
+        .hide();
+    });
 
     //Reserva médica
     $(document).on("click", "#btn_enviar_reserva_medica", function(){
         const fecha   = $("#fecha_reserva_medica").val();
         const hora    = $("#hora_reserva_medica").val();
-        const medico  = $("#medico_reserva_medica").val();
+        const medico  = $("#id_medico_reserva").val();
         const fechaReserva = fecha+" "+hora;
         const url     = "https://ort-api.herokuapp.com/reservas/";
 
@@ -172,6 +166,9 @@ $(document).ready(function(){
                     }
                 ),
                 contentType: 'application/json; charset=utf-8',
+                headers:{
+                    'Authorization':'Bearer eyJhbGciOiJIUzI1NiJ9.eyJpZCI6IjVmMThiODg1NmFhNTVlMDAxNzg2OTM2MSIsInRpcG8iOiJVIn0.Q5dLLw34WiglquYv1Li6OGOcMdAZQHpBPq_PlAnAmmc'
+                },
                 success:function(respuesta){
                     $.ajaxSetup({
                         headers:{
