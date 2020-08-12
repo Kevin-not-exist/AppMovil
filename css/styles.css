@@ -2,3 +2,6 @@ section{
     padding: 8px;
     width: 80%;
 }
+#id_medico_reserva{
+    display: none;
+}

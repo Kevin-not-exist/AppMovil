@@ -60,7 +60,6 @@
                                         <p>Puntuaci&oacute;n: ${informacion.puntuacion}</p>
                                         <p>Promedio: ${informacion.promedio}</p>
                                         <p>${informacion.email}</p>
-                                        <hr>
                                         <p><input type="text" id="id_medico_reserva" value="${informacion._id}"></p>
                                     </div>
                                 </ons-card>`
@@ -85,8 +84,8 @@
     <template id="alert-dialog-reserva">
         <ons-alert-dialog id="my-alert-dialog" modifier="rowfooter">
             <script>
-                    const id =  $("#id_medico_reserva").val();
-                    $("#id_medico").html(id);
+                const id =  $("#id_medico_reserva").val();
+                $("#id_medico").html(id);
             </script>
             <div class="alert-dialog-title">Reserva Médica</div>
           <div class="alert-dialog-content">
@@ -95,8 +94,6 @@
             
             <label for="hora_reserva_medica">Hora</label>
             <p><input type="time" id="hora_reserva_medica"></p>
-
-            <p id="id_medico"></p>
           </div>
           <div class="alert-dialog-footer">
             <ons-alert-dialog-button id="btn_salir_reserva_medica">Cancel</ons-alert-dialog-button>
@@ -244,9 +241,6 @@
                 <ons-list>
                     <ons-list-item onclick="fn.load('t_especialidades_disponibles','p_especialidades_disponibles')" modifier="chevron" tappabletap-background-color="#3ED47A">
                         <ons-icon icon="fa-store" size="20px" style="color:#3ED47A"></ons-icon>&nbsp;Especialidades Disponibles
-                    </ons-list-item>
-                    <ons-list-item onclick="fn.load('t_reserva_medica','p_reserva_medica')" modifier="chevron" tappabletap-background-color="#3ED47A">
-                        <ons-icon icon="fa-store" size="20px" style="color:#d47a3e"></ons-icon>&nbsp;Reserva médica
                     </ons-list-item>
                     <ons-list-item id="btn_logout" modifier="chevron" tappable tap-background-color="#3ED47A">
                         <ons-icon icon="fa-sign-out-alt" size="20px"></ons-icon>&nbsp;Cerrar Sesi&oacute;n

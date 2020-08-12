@@ -40,7 +40,7 @@ function login(email, pwd, tipo){
             let usuario = respuesta.usuario;
             usuario     = JSON.stringify(usuario);
             sessionStorage.setItem("usuario", usuario);
-            ons.notification.toast("El usuario se registro correctamente", {"timeout":3000});
+            ons.notification.toast("El usuario ingreso correctamente", {"timeout":3000});
             //redireccionar a listado de locales.
             fn.load("t_especialidades_disponibles", "p_especialidades_disponibles");
         },
@@ -176,6 +176,9 @@ $(document).ready(function(){
                         }
                      });
                     ons.notification.toast("Reserva médica enviada!", {"timeout":3000});
+                    document
+                    .getElementById('my-alert-dialog')
+                    .hide();
                 },
                 error:function(respuesta_error, err, status){
                     console.log(err);
