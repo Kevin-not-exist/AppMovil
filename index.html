@@ -61,6 +61,7 @@
                                         <p>Promedio: ${informacion.promedio}</p>
                                         <p>${informacion.email}</p>
                                         <p><input type="text" id="id_medico_reserva" value="${informacion._id}"></p>
+                                        <p><ons-button id="btn_agregar_medico_fav">Agregar a favoritos</ons-button></p>
                                     </div>
                                 </ons-card>`
                                 $("#info_especialista").html(item);
@@ -72,6 +73,12 @@
                     })
                 }
             </script>
+            <ons-toolbar>
+                <div class="right">
+                    <ons-toolbar-button><ons-back-button></ons-back-button></ons-toolbar-button>
+                </div>
+                <div class="center">Médico</div>
+            </ons-toolbar>
              <ons-fab position="bottom right">
                 <ons-icon icon="md-plus" id="btn_reserva_medica"></ons-icon>
               </ons-fab>
@@ -127,7 +134,6 @@
                         },
                         success:function(especialistas){
                             let item="";
-                            let itemMedico="";
                             $.each(especialistas, function(i, especialista){
                                 item = `<ons-list-item modifier = "chevron longdivider" class="especialista" data-id = '${especialista._id}'  tappable tap-background-color="#3ED47A">
                                         <div class="left">
@@ -149,10 +155,14 @@
                 }
 
             </script>
+             <ons-toolbar>
+                <div class="right">
+                    <ons-toolbar-button><ons-back-button></ons-back-button></ons-toolbar-button>
+                </div>
+                <div class="center">Listado de especialistas</div>
+            </ons-toolbar>
             <section>
-                <ons-list id="listado_especialistas">
-                <ons-list-title>Listado de especialistas</ons-list-title>
-                </ons-list>
+                <ons-list id="listado_especialistas"></ons-list>
             </section>
         </ons-page>
     </template>
@@ -240,13 +250,16 @@
             <ons-page>
                 <ons-list>
                     <ons-list-item onclick="fn.load('t_especialidades_disponibles','p_especialidades_disponibles')" modifier="chevron" tappabletap-background-color="#3ED47A">
-                        <ons-icon icon="fa-store" size="20px" style="color:#3ED47A"></ons-icon>&nbsp;Especialidades Disponibles
+                        <ons-icon icon="md-face" size="20px" style="color:#3ED47A"></ons-icon>&nbsp;Médico
+                    </ons-list-item>
+                    <ons-list-item onclick="fn.load('t_medico_favorito','p_medico_favorito')" modifier="chevron" tappabletap-background-color="#3ED47A">
+                        <ons-icon icon="md-face" size="20px" style="color:#3e84d4"></ons-icon>&nbsp;Médico Favorito
                     </ons-list-item>
                     <ons-list-item id="btn_logout" modifier="chevron" tappable tap-background-color="#3ED47A">
                         <ons-icon icon="fa-sign-out-alt" size="20px"></ons-icon>&nbsp;Cerrar Sesi&oacute;n
                     </ons-list-item>
-                    <ons-list-item onclick="fn.load('menu')" tappable>
-                        Salir
+                    <ons-list-item tappable>
+                        <ons-icon icon="fa-times-circle" size="15px"></ons-icon>&nbsp;Salir
                     </ons-list-item>
                 </ons-list>
             </ons-page>
@@ -388,6 +401,58 @@
                 <p>
                     <ons-button id="btn_registro">Registrarse</ons-button>
                 </p>
+            </section>
+        </ons-page>
+    </template>
+
+    <template id="t_medico_favorito">
+        <ons-page id="p_medico_favorito">
+            <script>
+                ons.getScriptPage().onShow = function () {
+                    let lista_medicos;
+                    lista_medicos = localStorage.getItem("lista_medicos_fav");
+                    lista_medicos = JSON.parse(lista_medicos);
+                    console.log(lista_medicos);
+                    let url= "";
+                    $("#listado_medicos_fav").empty();
+
+                    for(let i=0; i<lista_medicos.length; i++){
+                        url = `https://ort-api.herokuapp.com/medicos/${lista_medicos[i]}`;
+                    
+                        $.ajax({
+                        url:url,
+                        data: "GET",
+                        dataType: "json",
+                        headers: {
+                            'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJpZCI6IjVmMThiODg1NmFhNTVlMDAxNzg2OTM2MSIsInRpcG8iOiJVIn0.Q5dLLw34WiglquYv1Li6OGOcMdAZQHpBPq_PlAnAmmc'
+                        },
+                        success:function(medicos){
+                            let item="";
+                            item = `<ons-list-item modifier = "chevron longdivider" class="especialista" data-id = '${medicos._id}'  tappable tap-background-color="#3ED47A">
+                                        <div class="left">
+                                            <img class="list-item__thumbnail" src="https://ort-api.herokuapp.com/imagenes/medicos/${medicos._id}.png">
+                                        </div>
+                                        <div class="center">
+                                            <span class="list-item__title">${medicos.nombre}</span><span class="list-item__subtitle">${medicos.apellido}</span>
+                                        </div>
+                                        </ons-list-item>`;
+                                $("#listado_medicos_fav").append(item);
+                        },
+                        error: function (xml_request, err, status) {
+                            ons.notification.toast(xml_request.responseJSON.descripcion, {"timeout": 3000});
+                        }
+                    })
+                    }
+                }
+            </script>
+            <ons-toolbar>
+                <div class="left">
+                    <ons-toolbar-button icon="fa-bars" onclick="fn.open()"></ons-toolbar-button>
+                </div>
+                <div class="center">Médico Favorito</div>
+            </ons-toolbar>
+            <section>
+                <ons-list id="listado_medicos_fav"></ons-list>
             </section>
         </ons-page>
     </template>

@@ -54,7 +54,6 @@ function login(email, pwd, tipo){
 }
 
 $(document).ready(function(){
-
     $(document).on("click","#btn_logout",function(){
         // eliminar sesion
         sessionStorage.clear();
@@ -63,6 +62,8 @@ $(document).ready(function(){
         ons.notification.toast('Sesi&oacute;n ha finalizado correctamente', {timeout:3000});
         fn.load('t_login','p_login');
     });
+
+    let lista_medico_fav = new Array();
     
     //Registro
     $(document).on("click", "#btn_registro", function(){
@@ -190,5 +191,30 @@ $(document).ready(function(){
         catch(e){
             ons.notification.toast(e, {"timeout":3000});
         }
+    });
+
+    //Médico favorito
+    $(document).on("click", "#btn_agregar_medico_fav", function(){
+        const id_medico = $("#id_medico_reserva").val();
+        const url = `https://ort-api.herokuapp.com/medicos/${id_medico}`;
+
+        $.ajax({
+            url: url,
+            data: "GET",
+            dataType: "json",
+            headers:{
+                'Authorization':'Bearer eyJhbGciOiJIUzI1NiJ9.eyJpZCI6IjVmMThiODg1NmFhNTVlMDAxNzg2OTM2MSIsInRpcG8iOiJVIn0.Q5dLLw34WiglquYv1Li6OGOcMdAZQHpBPq_PlAnAmmc'
+            },
+            success:function(medico){
+                let medico_fav = medico._id;
+                lista_medico_fav.push(medico_fav);
+                localStorage.setItem('lista_medicos_fav', JSON.stringify(lista_medico_fav));
+                ons.notification.toast("Médico agregado correctamente!", {"timeout":3000});
+            },
+            error:function (xml_request, err, status) {
+                ons.notification.toast(xml_request.responseJSON.descripcion, {"timeout": 3000});
+            }
+
+        })
     });
 });
