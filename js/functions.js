@@ -184,8 +184,8 @@ $(document).ready(function(){
                 //contentType: 'application/json; charset=utf-8',
                 success:function(respuesta){
                     $.ajaxSetup({
-                        headers:{
-                            "Authorization": `Bearer ${respuesta.token}`
+                        "headers":{
+                            "Authorization":`Bearer ${respuesta.token}`
                         }
                      });
                     ons.notification.toast("Reserva médica enviada!", {"timeout":3000});

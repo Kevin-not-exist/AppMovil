@@ -1,4 +1,4 @@
-<html leng="es">
+<html>
 
 <head>
     <meta charset="UTF-8">
@@ -16,7 +16,6 @@
     <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js" integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew==" crossorigin=""></script>
     <script src="js/functions.js"></script>
 </head>
-
 <body>
     <template id="t_buscar_usuario">
         <ons-page id="p_buscar_usuario">
@@ -40,16 +39,29 @@
                                     url:url,
                                     data:"GET",
                                     dataType:"json",
-                                    
                                     success:function(usuarios){
-                                        
+                                                       let item=""
+                                        $.each(usuarios, function(i, usuario){
+
+                                            item = `<ons-list-item modifier = "chevron longdivider" class="especialista" data-id = '${usuario._id}'  tappable tap-background-color="#3ED47A">
+                                                        <div class="left">
+                                                            <img class="list-item__thumbnail" src="http://images.marcelocaiafa.com/imagenes/usuarios/${usuario._id}.png">
+                                                        </div>
+                                                        <div class="center">
+                                                            <p><span class="list-item__title">${usuario.nombre}</span><span class="list-item__subtitle">${usuario.apellido}</span></p>
+                                                            <p><span class="list-item__title">Puntuacion: ${usuario.documento}</span></p>
+                                                        </div>
+                                                    </ons-list-item>`,
+
+                                            $("#lista_buscar_usuario").append(item);                                                 
+                                        })
                                     },
                                     error(xml, err, status){
                                         ons.notification.toast(xml_request.responseJSON.descripcion, {
                                         "timeout": 3000
                                     });
                                     }
-                                });
+                                })
 
                             }catch(e){
                                 ons.notification.toast(e, {"timeout":3000})
@@ -62,10 +74,12 @@
                 }
                 
             </script>
-
             <section>
                 <p style="text-align: center; margin-top: 10px;"><ons-search-input id="nombre_apellido"placeholder="Nombre y apellido"></ons-search-input></p>
+
+                <ons-list id="lista_buscar_usuario"></ons-list>
             </section>
+
         </ons-page>
     </template>
 
@@ -74,7 +88,6 @@
             <script>
                 ons.getScriptPage().onInit = function(){
                     const especialista = this.data.id;
-                    //console.log('especialista ' + especialista);
 
                     $(document).on("click", "#btn_reserva_medica", function(){
                         
@@ -142,8 +155,8 @@
                     })
                 }
             </script>
-            <ons-toolbar>
             <!--Boton para retroceder-->
+            <ons-toolbar>
             <div class="right">
                 <ons-toolbar-button><ons-back-button></ons-back-button></ons-toolbar-button>
             </div>
@@ -194,8 +207,7 @@
            
             $(document).on("click", ".especialista", function(){
                 const id = $(this).data("id");
-                fn.load("t_info_especialista", "p_info_especialista", {data:{id:id}});
-                
+                nav.pushPage("t_info_especialista", {data:{id:id}})
             });
 
                 ons.getScriptPage().onShow=function(){
