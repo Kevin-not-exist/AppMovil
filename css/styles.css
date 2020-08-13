@@ -5,3 +5,9 @@ section{
 #id_medico_reserva{
     display: none;
 }
+
+#lista_comentarios span{
+    width: 100%;
+}
+
+#mapid { height: 200px; }

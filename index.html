@@ -12,17 +12,71 @@
     <link rel="stylesheet" href="https://unpkg.com/onsenui/css/onsen-css-components.min.css">
     <script src="https://unpkg.com/onsenui/js/onsenui.min.js"></script>
     <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css" integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ==" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js" integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew==" crossorigin=""></script>
     <script src="js/functions.js"></script>
 </head>
 
 <body>
+    <template id="t_buscar_usuario">
+        <ons-page id="p_buscar_usuario">
+            <script>
+                ons.getScriptPage().onShow = function(){
+                    $(document).on("input", "#nombre_apellido" , function(){
+
+                        const busqueda = $(this).val();
+                        if(busqueda.length > 3 && busqueda.includes(" ")){
+
+                            try{
+                                let aux= /[0-9]/g
+                                if(aux.test(busqueda)){
+                                    throw "No se deben ingresar numeros"                                
+                                }
+                                let pos_espacio = busqueda.indexOf(" ");
+                                let nombre = busqueda.substring(0, pos_espacio);
+                                let apellido= busqueda.substring(pos_espacio+1 , busqueda.length)
+                                const url= `https://ort-api.herokuapp.com/usuarios/?nombre=${nombre}&apellido=${apellido}`
+                                $.ajax({
+                                    url:url,
+                                    data:"GET",
+                                    dataType:"json",
+                                    headers:{
+                                        'Authorization':'Bearer eyJhbGciOiJIUzI1NiJ9.eyJpZCI6IjVmMThiNDdmOGIzODE5MDAxN2E1ODE4ZCIsInRpcG8iOiJNIn0.G7P95R3EKJ_HSk4eV3R9nYROPXlrgGeIETdmH_GBtY4'
+                                    },
+                                    success:function(usuarios){
+                                        
+                                    },
+                                    error(xml, err, status){
+                                        ons.notification.toast(xml_request.responseJSON.descripcion, {
+                                        "timeout": 3000
+                                    });
+                                    }
+                                })
+
+                            }catch(e){
+                                ons.notification.toast(e, {"timeout":3000})
+                            }
+                        }
+                        
+                        
+                    })
+                    
+                }
+                
+            </script>
+
+            <section>
+                <p style="text-align: center; margin-top: 10px;"><ons-search-input id="nombre_apellido"placeholder="Nombre y apellido"></ons-search-input></p>
+            </section>
+        </ons-page>
+    </template>
+
     <template id="t_info_especialista">
         <ons-page id="p_info_especialista">
             <script>
-                ons.getScriptPage().onShow = function(){
+                ons.getScriptPage().onInit = function(){
                     const especialista = this.data.id;
-                    console.log('especialista ' + especialista);
-
+                    //console.log('especialista ' + especialista);
 
                     $(document).on("click", "#btn_reserva_medica", function(){
                         
@@ -38,7 +92,7 @@
                                 dialog.show();
                             });
                         }                      
-                    })
+                    });
 
                     const url= `https://ort-api.herokuapp.com/medicos/${especialista}`;
                     $.ajax({
@@ -49,22 +103,42 @@
                             'Authorization':'Bearer eyJhbGciOiJIUzI1NiJ9.eyJpZCI6IjVmMThiODg1NmFhNTVlMDAxNzg2OTM2MSIsInRpcG8iOiJVIn0.Q5dLLw34WiglquYv1Li6OGOcMdAZQHpBPq_PlAnAmmc'
                         },
                         success:function(informacion){
+                            //Kevin
                             let item = "";
                                 item = `
                                 <ons-card>
-                                    <img src="https://ort-api.herokuapp.com/imagenes/medicos/${informacion._id}.png" alt="Onsen UI" style="width: 100%">
-                                    <div class="title">
-                                        <h3>${informacion.nombre} ${informacion.apellido}</h3>
-                                    </div>
-                                    <div class="content">
-                                        <p>Puntuaci&oacute;n: ${informacion.puntuacion}</p>
-                                        <p>Promedio: ${informacion.promedio}</p>
-                                        <p>${informacion.email}</p>
-                                        <p><input type="text" id="id_medico_reserva" value="${informacion._id}"></p>
-                                        <p><ons-button id="btn_agregar_medico_fav">Agregar a favoritos</ons-button></p>
-                                    </div>
+                                    <p><input type="text" id="id_medico_reserva" value="${informacion._id}"></p>
                                 </ons-card>`
                                 $("#info_especialista").html(item);
+
+                            //Yamila
+                            let itemDos = "";
+                            $("#img_info_esp").attr("src", `https://ort-api.herokuapp.com/imagenes/medicos/${informacion._id}.png`);
+                            $("#nombre_info_esp").html(`${informacion.nombre} ${informacion.apellido}`);
+                            $.each(informacion.especialidades, function(i, especialidad){
+
+                                $("#especialidades_info_esp").append(" " + especialidad.descripcion);
+                            })
+                            $("#puntuacion_info_esp").html("Puntuacion: "+ informacion.puntuacion);
+                            $("#promedio_info_esp").html("Promedio: "+informacion.promedio);
+                            $.each(informacion.comentarios, function(i, comentario){
+                                itemDos=`
+                                    <ons-list-item>
+                                        <span>Usuario: ${comentario.usuario.nombre} ${comentario.usuario.apellido}</span>
+                                        <span>Comentario: ${comentario.comentario}</span>
+                                        <span>Puntuacion: ${comentario.puntuacion}</span>
+                                    </ons-list-item>
+                                    `
+                                $("#lista_comentarios").append(itemDos);
+                            })
+                            let mymap = L.map('mapid').setView([Number(informacion.centroMedico.lat), Number(informacion.centroMedico.lng)], 13);
+
+                            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                            }).addTo(mymap);
+                            //.openPopup();
+                            L.marker([Number(informacion.centroMedico.lat), Number(informacion.centroMedico.lng)]).addTo(mymap)
+                                .bindPopup(`${informacion.centroMedico.descripcion}`)
                         },
                         error:function (xml_request, err, status) {
                             ons.notification.toast(xml_request.responseJSON.descripcion, {"timeout": 3000});
@@ -83,6 +157,17 @@
                 <ons-icon icon="md-plus" id="btn_reserva_medica"></ons-icon>
               </ons-fab>
             <section>
+                <img src="" id="img_info_esp" alt="Onsen UI" style="width: 100%">
+                    <div class="title" id="nombre_info_esp"></div>
+                    <div id="especialidades_info_esp">Especialidades: </div>
+                    <div id="puntuacion_info_esp"></div>
+                    <div id="promedio_info_esp"></div>
+                    <p><ons-button id="btn_agregar_medico_fav">Agregar a favoritos</ons-button></p>
+                    <ons-list id="lista_comentarios">
+                        <ons-list-header><h2>Comentarios:</h2></ons-list-header>
+                    </ons-list>
+                </ons-card>
+                <div id="mapid"></div>
                 <ons-list id="info_especialista"></ons-list>
             </section>
         </ons-page>
@@ -90,10 +175,6 @@
 
     <template id="alert-dialog-reserva">
         <ons-alert-dialog id="my-alert-dialog" modifier="rowfooter">
-            <script>
-                const id =  $("#id_medico_reserva").val();
-                $("#id_medico").html(id);
-            </script>
             <div class="alert-dialog-title">Reserva Médica</div>
           <div class="alert-dialog-content">
             <label for="fecha_reserva_medica">Fecha</label>
@@ -112,16 +193,16 @@
     <template id="t_especialistas">
         <ons-page id="p_especialistas">
             <script>
-                ons.getScriptPage().onInit = function(){
+           
+            $(document).on("click", ".especialista", function(){
+                const id = $(this).data("id");
+                fn.load("t_info_especialista", "p_info_especialista", {data:{id:id}});
+                
+            });
 
-                    $(document).on("click", ".especialista", function(){
-                        const id = $(this).data("id");
-                        nav.pushPage("t_info_especialista", {data:{
-                            id:id
-                        }})
-                    })
-                }
                 ons.getScriptPage().onShow=function(){
+
+                    
 
                     const especialidad = this.data.id;
                     const url= `https://ort-api.herokuapp.com/medicos/especialidad/?buscar=${especialidad}`
@@ -286,6 +367,7 @@
 
                 ons.getScriptPage().onInit = function () {
 
+                    
                     $(document).on("click", "#btn_login", function () {
                         try {
                             const email = $("#login_usuario").val();
@@ -353,7 +435,7 @@
                     <ons-icon icon="fa-eye-slash" id="mostrar_pwd"></ons-icon>
                 <p>
                     <ons-select id="tipo_login">
-                        <option value="">Seleccione una opción</option>
+                        <option value="" selected disabled>Seleccione una opción</option>
                         <option value="U">Usuario</option>
                         <option value="M">Médico</option>
                     </ons-select>
@@ -412,7 +494,6 @@
                     let lista_medicos;
                     lista_medicos = localStorage.getItem("lista_medicos_fav");
                     lista_medicos = JSON.parse(lista_medicos);
-                    console.log(lista_medicos);
                     let url= "";
                     $("#listado_medicos_fav").empty();
 

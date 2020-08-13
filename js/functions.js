@@ -41,8 +41,14 @@ function login(email, pwd, tipo){
             usuario     = JSON.stringify(usuario);
             sessionStorage.setItem("usuario", usuario);
             ons.notification.toast("El usuario ingreso correctamente", {"timeout":3000});
-            //redireccionar a listado de locales.
-            fn.load("t_especialidades_disponibles", "p_especialidades_disponibles");
+            //Si es usuario
+            if(tipo == "U"){
+                fn.load("t_especialidades_disponibles", "p_especialidades_disponibles");
+            }
+            //Si es médico
+            if(tipo == "M"){
+                fn.load("t_buscar_usuario", "p_buscar_usuario");
+            }
         },
         error:function(respuesta_error, err, status){
             console.log(respuesta_error);
@@ -132,11 +138,14 @@ $(document).ready(function(){
         }
     });
 
+
     $(document).on("click", "#btn_salir_reserva_medica", function(){
         document
         .getElementById('my-alert-dialog')
         .hide();
     });
+
+    
 
     //Reserva médica
     $(document).on("click", "#btn_enviar_reserva_medica", function(){
@@ -217,4 +226,5 @@ $(document).ready(function(){
 
         })
     });
+
 });
