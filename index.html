@@ -500,7 +500,14 @@
                     let url= "";
                     $("#listado_medicos_fav").empty();
 
-                    for(let i=0; i<lista_medicos.length; i++){
+                    if(lista_medicos == null){
+                        let item="";
+                            item = `<ons-list-item tappable tap-background-color="#3ED47A">
+                                        <h1>Aún no tienes medicos favoritos</h1>
+                                        </ons-list-item>`;
+                                $("#listado_medicos_fav").append(item);
+                    }else{
+                        for(let i=0; i<lista_medicos.length; i++){
                         url = `https://ort-api.herokuapp.com/medicos/${lista_medicos[i]}`;
                     
                         $.ajax({
@@ -523,6 +530,7 @@
                             ons.notification.toast(xml_request.responseJSON.descripcion, {"timeout": 3000});
                         }
                     })
+                    }
                     }
                 }
             </script>
