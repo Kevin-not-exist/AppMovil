@@ -1,3 +1,9 @@
+$.ajaxSetup({
+    "headers":{
+        "Content-Type": "application/json"
+    },
+});
+
 window.fn = {};
 
 window.fn.open = function(){
@@ -33,8 +39,8 @@ function login(email, pwd, tipo){
         contentType: 'application/json; charset=utf-8',
         success:function(respuesta){
             $.ajaxSetup({
-                headers:{
-                    token:respuesta.token
+                "headers":{
+                    "Authorization":`Bearer ${respuesta.token}`
                 }
              });
             let usuario = respuesta.usuario;
@@ -116,8 +122,8 @@ $(document).ready(function(){
                 contentType: 'application/json; charset=utf-8',
                 success:function(respuesta){
                     $.ajaxSetup({
-                        headers:{
-                            token:respuesta.token
+                        "headers":{
+                            "Authorization":`Bearer ${respuesta.token}`
                         }
                      });
                     let usuario = respuesta.usuario;
@@ -175,14 +181,11 @@ $(document).ready(function(){
                         "medico": medico,
                     }
                 ),
-                contentType: 'application/json; charset=utf-8',
-                headers:{
-                    'Authorization':'Bearer eyJhbGciOiJIUzI1NiJ9.eyJpZCI6IjVmMThiODg1NmFhNTVlMDAxNzg2OTM2MSIsInRpcG8iOiJVIn0.Q5dLLw34WiglquYv1Li6OGOcMdAZQHpBPq_PlAnAmmc'
-                },
+                //contentType: 'application/json; charset=utf-8',
                 success:function(respuesta){
                     $.ajaxSetup({
                         headers:{
-                            token:respuesta.token
+                            "Authorization": `Bearer ${respuesta.token}`
                         }
                      });
                     ons.notification.toast("Reserva médica enviada!", {"timeout":3000});
@@ -211,9 +214,6 @@ $(document).ready(function(){
             url: url,
             data: "GET",
             dataType: "json",
-            headers:{
-                'Authorization':'Bearer eyJhbGciOiJIUzI1NiJ9.eyJpZCI6IjVmMThiODg1NmFhNTVlMDAxNzg2OTM2MSIsInRpcG8iOiJVIn0.Q5dLLw34WiglquYv1Li6OGOcMdAZQHpBPq_PlAnAmmc'
-            },
             success:function(medico){
                 let medico_fav = medico._id;
                 lista_medico_fav.push(medico_fav);

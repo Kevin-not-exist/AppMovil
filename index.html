@@ -40,9 +40,7 @@
                                     url:url,
                                     data:"GET",
                                     dataType:"json",
-                                    headers:{
-                                        'Authorization':'Bearer eyJhbGciOiJIUzI1NiJ9.eyJpZCI6IjVmMThiNDdmOGIzODE5MDAxN2E1ODE4ZCIsInRpcG8iOiJNIn0.G7P95R3EKJ_HSk4eV3R9nYROPXlrgGeIETdmH_GBtY4'
-                                    },
+                                    
                                     success:function(usuarios){
                                         
                                     },
@@ -51,7 +49,7 @@
                                         "timeout": 3000
                                     });
                                     }
-                                })
+                                });
 
                             }catch(e){
                                 ons.notification.toast(e, {"timeout":3000})
@@ -99,9 +97,6 @@
                         url:url,
                         data: "GET",
                         dataType: "json",
-                        headers:{
-                            'Authorization':'Bearer eyJhbGciOiJIUzI1NiJ9.eyJpZCI6IjVmMThiODg1NmFhNTVlMDAxNzg2OTM2MSIsInRpcG8iOiJVIn0.Q5dLLw34WiglquYv1Li6OGOcMdAZQHpBPq_PlAnAmmc'
-                        },
                         success:function(informacion){
                             //Kevin
                             let item = "";
@@ -148,14 +143,16 @@
                 }
             </script>
             <ons-toolbar>
-                <div class="right">
-                    <ons-toolbar-button><ons-back-button></ons-back-button></ons-toolbar-button>
-                </div>
-                <div class="center">Médico</div>
+            <!--Boton para retroceder-->
+            <div class="right">
+                <ons-toolbar-button><ons-back-button></ons-back-button></ons-toolbar-button>
+            </div>
+            <div class="center">Médico</div>
             </ons-toolbar>
-             <ons-fab position="bottom right">
+            <!--Boron reserva médica-->
+            <ons-fab position="bottom right">
                 <ons-icon icon="md-plus" id="btn_reserva_medica"></ons-icon>
-              </ons-fab>
+            </ons-fab>
             <section>
                 <img src="" id="img_info_esp" alt="Onsen UI" style="width: 100%">
                     <div class="title" id="nombre_info_esp"></div>
@@ -173,6 +170,7 @@
         </ons-page>
     </template>
 
+    <!--Ventana Reserva Médica-->
     <template id="alert-dialog-reserva">
         <ons-alert-dialog id="my-alert-dialog" modifier="rowfooter">
             <div class="alert-dialog-title">Reserva Médica</div>
@@ -201,18 +199,12 @@
             });
 
                 ons.getScriptPage().onShow=function(){
-
-                    
-
                     const especialidad = this.data.id;
                     const url= `https://ort-api.herokuapp.com/medicos/especialidad/?buscar=${especialidad}`
                     $.ajax({
                         url:url,
                         data: "GET",
                         dataType: "json",
-                        headers: {
-                            'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJpZCI6IjVmMThiODg1NmFhNTVlMDAxNzg2OTM2MSIsInRpcG8iOiJVIn0.Q5dLLw34WiglquYv1Li6OGOcMdAZQHpBPq_PlAnAmmc '
-                        },
                         success:function(especialistas){
                             let item="";
                             $.each(especialistas, function(i, especialista){
@@ -228,9 +220,8 @@
                             });
                         },
                         error: function (xml_request, err, status) {
-                            ons.notification.toast(xml_request.responseJSON.descripcion, {
-                                "timeout": 3000
-                            });
+                            console.log(xml_request.responseJSON.error);
+                            ons.notification.toast(xml_request.responseJSON.error, {"timeout": 3000});
                         }
                     })
                 }
@@ -255,7 +246,7 @@
 
                     $(document).on("click", ".l_esp_disponibles", function(){
                         const id = $(this).data("id");
-                        nav.pushPage("t_especialistas", {data:{
+                        fn.load("t_especialistas", {data:{
                             id:id
                         }})
                     })
@@ -504,9 +495,6 @@
                         url:url,
                         data: "GET",
                         dataType: "json",
-                        headers: {
-                            'Authorization': 'Bearer eyJhbGciOiJIUzI1NiJ9.eyJpZCI6IjVmMThiODg1NmFhNTVlMDAxNzg2OTM2MSIsInRpcG8iOiJVIn0.Q5dLLw34WiglquYv1Li6OGOcMdAZQHpBPq_PlAnAmmc'
-                        },
                         success:function(medicos){
                             let item="";
                             item = `<ons-list-item tappable tap-background-color="#3ED47A">
