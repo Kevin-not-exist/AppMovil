@@ -1,6 +1,6 @@
-<html>
+<!DOCTYPE html>
 
-<head>
+<head lang="es">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>App Movil</title>
@@ -16,7 +16,116 @@
     <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js" integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew==" crossorigin=""></script>
     <script src="js/functions.js"></script>
 </head>
+
 <body>
+    <!--aca-->
+    <template id="t_historial_consultas">
+        <ons-page id="p_historial_consultas">
+            <script>
+
+                $(document).on("click", "#btn_h_c_buscar", function(){
+                    let usuario = sessionStorage.getItem("usuario");
+                    usuario = JSON.parse(usuario);
+                    let fecha= $("#input_h_c_fecha").val();
+                    const url= `https://ort-api.herokuapp.com/reservas/?fecha=${fecha}`;
+                    
+                    $.ajax({
+                        url:url,
+                        type:"GET",
+                        dataType:"json",
+                        success:function(lista){
+                            $("#lista_consultas_fecha").empty();
+                            let item="";
+                            let usu="La consulta no tiene un usuario asignado";
+                            let lista_filtrada=new Array();
+
+                            if(lista.reservas && lista.reservas!=null && lista.reservas.length>0){
+
+                                $.each(lista.reservas, function(i, consulta){
+                                    // if(consulta._id == usuario._id){ en caso de que la reserva deba ser filtrada por medico
+                                        lista_filtrada.push(consulta);
+                                    //}
+                                })
+
+                                if(lista_filtrada && lista_filtrada!=null && lista_filtrada.length>0){
+                                    $.each(lista_filtrada, function(i, consulta_f){
+
+                                        if(consulta_f.usuario && consulta_f.usuario!=null){
+                                            usu=consulta_f.usuario;
+
+                                            item=`
+                                            <ons-list-header>${consulta_f.fechaString}</ons-list-header>
+                                            <ons-list-item  modifier="chevron" class="usuario_reserva_fecha" data-nota="${consulta_f.notas}" tappable tap-background-color="#3ED47A"">
+                                            <div class="left">
+                                                <img class="list-item__thumbnail" src="http://images.marcelocaiafa.com/imagenes/usuarios/${usu._id}.png">
+                                            </div>
+                                            <div class="center">
+                                                <span class="list-item__title">${usu.nombre}</span><span class="list-item__subtitle">${usu.apellido}</span>
+                                            </div>
+                                            </ons-list-item>
+                                            `
+                                            $("#lista_consultas_fecha").append(item);
+                                        }
+                                        else{
+                                            item=`
+                                            <ons-list-header>${consulta_f.fechaString}</ons-list-header>
+                                            <ons-list-item >
+                                                <div class="center">
+                                                    <span class="list-item__title">${usu}</span>
+                                                </div>
+                                            </ons-list-item>
+                                            `
+                                            $("#lista_consultas_fecha").append(item);
+                                        }
+                                    })
+                                }else{
+                                    $("#lista_consultas_fecha").append(`<ons-list-header>${fecha}</ons-list-header><ons-list-item><h3>No tiene reservas para esta fecha</h3></ons-list-item>`);
+                                }
+
+                            }else{
+                                $("#lista_consultas_fecha").append(`<ons-list-header>${fecha}</ons-list-header><ons-list-item><h3>No tiene reservas para esta fecha</h3></ons-list-item>`);
+                            }
+
+                        },
+                        error(xml, err, status){
+                            ons.notification.toast(xml_request.responseJSON.descripcion, {
+                            "timeout": 3000
+                            })
+                        }
+                    })
+                })
+
+
+                    $(document).on("click", ".usuario_reserva_fecha", function(){
+                        let nota = $(this).data("nota");
+                        console.log(nota);
+                        if(nota==null || nota=="" || nota=="undefined"){
+                            nota = "Esta consulta no contiene notas";
+                            console.log("eeeeeee");
+                        }
+
+                        var notify = function() {
+                            ons.notification.alert(nota,{title:"Notas:"});
+                        };
+
+                        notify();
+                    })
+                    
+            </script>
+            <section>
+                <div>
+                    <label for="input_h_c_fecha">Seleccione la fecha: </label>
+                    <input type="date" id="input_h_c_fecha">
+                    <ons-button id="btn_h_c_buscar">Buscar</ons-button>
+                </div>
+                <div>
+                    <ons-list id="lista_consultas_fecha"></ons-list>
+                </div>
+            </section>
+            
+        </ons-page>
+    </template>
+    <!--hasta ACA-->
     <template id="t_buscar_usuario">
         <ons-page id="p_buscar_usuario">
             <script>
@@ -29,21 +138,23 @@
                             try{
                                 let aux= /[0-9]/g
                                 if(aux.test(busqueda)){
-                                    throw "No se deben ingresar numeros"                                
+                                    throw "No se deben ingresar numeros"           
                                 }
                                 let pos_espacio = busqueda.indexOf(" ");
                                 let nombre = busqueda.substring(0, pos_espacio);
                                 let apellido= busqueda.substring(pos_espacio+1 , busqueda.length)
+
                                 const url= `https://ort-api.herokuapp.com/usuarios/?nombre=${nombre}&apellido=${apellido}`
                                 $.ajax({
                                     url:url,
                                     data:"GET",
                                     dataType:"json",
                                     success:function(usuarios){
-                                                       let item=""
+                                        $("#lista_buscar_usuario").empty();
+                                        let item=""
                                         $.each(usuarios, function(i, usuario){
 
-                                            item = `<ons-list-item modifier = "chevron longdivider" class="especialista" data-id = '${usuario._id}'  tappable tap-background-color="#3ED47A">
+                                            item = `<ons-list-item modifier = "chevron longdivider" class="usuario" data-id = '${usuario._id}'  tappable tap-background-color="#3ED47A">
                                                         <div class="left">
                                                             <img class="list-item__thumbnail" src="http://images.marcelocaiafa.com/imagenes/usuarios/${usuario._id}.png">
                                                         </div>
@@ -70,7 +181,13 @@
                         
                         
                     })
-                    
+                    $(document).on("click", ".usuario", function(){
+                        const id = $(this).data("id");
+                        console.log(id);
+                        fn.load("t_consultas_usuario", "p_consultas_usuario", {data:{ //aca
+                            id:id
+                        }})
+                    })
                 }
                 
             </script>
@@ -82,12 +199,60 @@
 
         </ons-page>
     </template>
+<!--desde acfa-->
+    <template id="t_consultas_usuario">
+        <ons-page id="p_consultas_usuario">
+            <script>
+                ons.getScriptPage().onInit=function(){
+                    const usuario= this.data.id;
+                    const url = `https://ort-api.herokuapp.com/usuarios/${usuario}/consultas`
+                    $.ajax({
+                        url:url,
+                        type:"GET",
+                        dataType: "json",
+                        success:function(consultas){
+                            let item="";
+                            if(!consulta.notas ||consultas == null || consultas.length<0){
+                                $("#lista_consultas_usuario").append(`<ons-list-header>El usuario no tiene consultas registradas</ons-list-header>`)
+                                    
+                                }else{
+                                    $.each(consultas, function(i, consulta){
+                                        {
+                                            if(!consulta.notas || consulta.notas == null || consulta.notas==""){
+                                                consulta.notas= "No se agregaron notas"
+                                            }
+                                            item=`
+                                            <ons-list-header>${consulta.fechaString}</ons-list-header>
+                                            <ons-list-item tappable>
+                                                <p>Notas: ${consulta.notas}</p>
+                                            </ons-list-item>`
+                                        }
+                                        $("#lista_consultas_usuario").append(item);
+                                    })
+                                }
+                        },
+                        error(xml, err, status){
+                            ons.notification.toast(xml_request.responseJSON.descripcion,{
+                                "timeout":3000
+                            });
+                        }
+                    })
+                }
+            </script>
+ 
+            <ons-list id="lista_consultas_usuario"></ons-list>
+              
+        </ons-page>
+    </template>
+    <!-- hasta aca -->
 
     <template id="t_info_especialista">
         <ons-page id="p_info_especialista">
             <script>
-                ons.getScriptPage().onInit = function(){
+
+                ons.getScriptPage().onShow = function(){
                     const especialista = this.data.id;
+                    const url= `https://ort-api.herokuapp.com/medicos/${especialista}`;
 
                     $(document).on("click", "#btn_reserva_medica", function(){
                         
@@ -105,22 +270,21 @@
                         }                      
                     });
 
-                    const url= `https://ort-api.herokuapp.com/medicos/${especialista}`;
                     $.ajax({
                         url:url,
                         data: "GET",
                         dataType: "json",
                         success:function(informacion){
                             //Kevin
-                            let item = "";
-                                item = `
+                            let itemDos = "";
+                                itemDos = `
                                 <ons-card>
                                     <p><input type="text" id="id_medico_reserva" value="${informacion._id}"></p>
                                 </ons-card>`
-                                $("#info_especialista").html(item);
+                                $("#info_especialista").html(itemDos);
 
                             //Yamila
-                            let itemDos = "";
+                            let item= "";
                             $("#img_info_esp").attr("src", `https://ort-api.herokuapp.com/imagenes/medicos/${informacion._id}.png`);
                             $("#nombre_info_esp").html(`${informacion.nombre} ${informacion.apellido}`);
                             $.each(informacion.especialidades, function(i, especialidad){
@@ -130,54 +294,73 @@
                             $("#puntuacion_info_esp").html("Puntuacion: "+ informacion.puntuacion);
                             $("#promedio_info_esp").html("Promedio: "+informacion.promedio);
                             $.each(informacion.comentarios, function(i, comentario){
-                                itemDos=`
+                                item=`
                                     <ons-list-item>
                                         <span>Usuario: ${comentario.usuario.nombre} ${comentario.usuario.apellido}</span>
                                         <span>Comentario: ${comentario.comentario}</span>
                                         <span>Puntuacion: ${comentario.puntuacion}</span>
                                     </ons-list-item>
                                     `
-                                $("#lista_comentarios").append(itemDos);
+                                $("#lista_comentarios").append(item);
                             })
-                            let mymap = L.map('mapid').setView([Number(informacion.centroMedico.lat), Number(informacion.centroMedico.lng)], 13);
+                            
+                            
+                            console.log('a');
+                            let myMap = document.getElementById("mapid");
+                            if(myMap == null ){
+                                let contenedor = document.getElementById("map_container");
+                                contenedor.innerHTML = "<div id='mapid'></div>";
+                                myMap = document.getElementById("mapid");
 
-                            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-                                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                            }).addTo(mymap);
-                            //.openPopup();
-                            L.marker([Number(informacion.centroMedico.lat), Number(informacion.centroMedico.lng)]).addTo(mymap)
-                                .bindPopup(`${informacion.centroMedico.descripcion}`)
+                                console.log('b');
+                                myMap = L.map('mapid').setView([Number(informacion.centroMedico.lat), Number(informacion.centroMedico.lng)], 13);
+
+                                L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                                    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+                                }).addTo(myMap);
+                                //.openPopup();
+                                L.marker([Number(informacion.centroMedico.lat), Number(informacion.centroMedico.lng)]).addTo(myMap)
+                                    .bindPopup(`${informacion.centroMedico.descripcion}`);
+                            }
+                            
                         },
                         error:function (xml_request, err, status) {
-                            ons.notification.toast(xml_request.responseJSON.descripcion, {"timeout": 3000});
+                            ons.notification.toast(xml_request.responseJSON.descripcion, {
+                                "timeout": 3000
+                            });
                         }
 
                     })
                 }
             </script>
-            <!--Boton para retroceder-->
-            <ons-toolbar>
-            <div class="right">
-                <ons-toolbar-button><ons-back-button></ons-back-button></ons-toolbar-button>
-            </div>
-            <div class="center">Médico</div>
-            </ons-toolbar>
-            <!--Boron reserva médica-->
-            <ons-fab position="bottom right">
-                <ons-icon icon="md-plus" id="btn_reserva_medica"></ons-icon>
-            </ons-fab>
+                 <!--Boton para retroceder-->
+                 <ons-toolbar>
+                <div class="right">
+                    <ons-toolbar-button><ons-back-button></ons-back-button></ons-toolbar-button>
+                </div>
+                <div class="center">Médico</div>
+                </ons-toolbar>
+                <!--Boron reserva médica-->
+                <ons-fab position="bottom right">
+                    <ons-icon icon="md-plus" id="btn_reserva_medica"></ons-icon>
+                </ons-fab>
             <section>
-                <img src="" id="img_info_esp" alt="Onsen UI" style="width: 100%">
+                <ons-card>
+                    <img src="" id="img_info_esp" alt="Onsen UI" style="width: 100%">
                     <div class="title" id="nombre_info_esp"></div>
                     <div id="especialidades_info_esp">Especialidades: </div>
                     <div id="puntuacion_info_esp"></div>
                     <div id="promedio_info_esp"></div>
+                    <!--Kevin-->
                     <p><ons-button id="btn_agregar_medico_fav">Agregar a favoritos</ons-button></p>
+                    <p><ons-button id="btn_ventana_comentario">Comentario</ons-button></p>
+                    <ons-list id="lista_comentarios">
+                    <!---->
                     <ons-list id="lista_comentarios">
                         <ons-list-header><h2>Comentarios:</h2></ons-list-header>
                     </ons-list>
                 </ons-card>
-                <div id="mapid"></div>
+                <div id="map_container"></div>
                 <ons-list id="info_especialista"></ons-list>
             </section>
         </ons-page>
@@ -201,25 +384,32 @@
         </ons-alert-dialog>
     </template>
 
+    <!--hasta aca-->
+
     <template id="t_especialistas">
         <ons-page id="p_especialistas">
             <script>
-           
-            $(document).on("click", ".especialista", function(){
-                const id = $(this).data("id");
-                nav.pushPage("t_info_especialista", {data:{id:id}})
-            });
+                ons.getScriptPage().onInit = function(){
 
+                    $(document).on("click", ".especialista", function(){
+                        const id = $(this).data("id");
+                        fn.load("t_info_especialista", "p_info_especialista", {data:{
+                            id:id
+                        }})
+                    })
+                }
                 ons.getScriptPage().onShow=function(){
+
                     const especialidad = this.data.id;
                     const url= `https://ort-api.herokuapp.com/medicos/especialidad/?buscar=${especialidad}`
                     $.ajax({
                         url:url,
-                        data: "GET",
+                        type: "GET",
                         dataType: "json",
                         success:function(especialistas){
                             let item="";
                             $.each(especialistas, function(i, especialista){
+        
                                 item = `<ons-list-item modifier = "chevron longdivider" class="especialista" data-id = '${especialista._id}'  tappable tap-background-color="#3ED47A">
                                         <div class="left">
                                             <img class="list-item__thumbnail" src="https://ort-api.herokuapp.com/imagenes/medicos/${especialista._id}.png">
@@ -227,13 +417,18 @@
                                         <div class="center">
                                             <span class="list-item__title">${especialista.nombre}</span><span class="list-item__subtitle">${especialista.apellido}</span>
                                         </div>
-                                        </ons-list-item>`;
+                                        <div class="right">
+                                            <span class="list-item__title">Puntuacion: ${especialista.puntuacion}</span>
+                                        </div>
+                                        </ons-list-item>`,
                                 $("#listado_especialistas").append(item);
                             });
                         },
                         error: function (xml_request, err, status) {
-                            console.log(xml_request.responseJSON.error);
-                            ons.notification.toast(xml_request.responseJSON.error, {"timeout": 3000});
+                            console.log(xml_request);
+                            ons.notification.toast(xml_request.responseJSON.descripcion, {
+                                "timeout": 3000
+                            });
                         }
                     })
                 }
@@ -246,7 +441,8 @@
                 <div class="center">Listado de especialistas</div>
             </ons-toolbar>
             <section>
-                <ons-list id="listado_especialistas"></ons-list>
+                <ons-list id="listado_especialistas">
+                </ons-list>
             </section>
         </ons-page>
     </template>
@@ -254,11 +450,11 @@
     <template id="t_especialidades_disponibles">
         <ons-page id="p_especialidades_disponibles">
             <script>
-                ons.getScriptPage().onInit = function(){
+                ons.getScriptPage().onShow = function(){
 
                     $(document).on("click", ".l_esp_disponibles", function(){
                         const id = $(this).data("id");
-                        fn.load("t_especialistas", {data:{
+                        fn.load("t_especialistas", "p_especialistas", {data:{
                             id:id
                         }})
                     })
@@ -272,47 +468,47 @@
             </ons-toolbar>
             <section>
                 <ons-list>
-                    <ons-list-item class="l_esp_disponibles" data-id = "Cardiolog&iacute;a">
+                    <ons-list-item class="l_esp_disponibles" modifier="chevron" data-id = "Cardiolog&iacute;a" tappable tap-background-color="#3ED47A"> <!--se agrego el chevron-->
                         <div class="center">
                             <span>Cardiolog&iacute;a</span>
                         </div>
                     </ons-list-item>
-                    <ons-list-item class="l_esp_disponibles" data-id = "Oftalmolog&iacute;a">
+                    <ons-list-item class="l_esp_disponibles" modifier="chevron" data-id = "Oftalmolog&iacute;a" tappable tap-background-color="#3ED47A">
                         <div class="center">
                             <span>Oftalmolog&iacute;a</span>
                         </div>
                     </ons-list-item>
-                    <ons-list-item class="l_esp_disponibles" data-id = "Neumolog&iacute;a">
+                    <ons-list-item class="l_esp_disponibles" modifier="chevron" data-id = "Neumolog&iacute;a" tappable tap-background-color="#3ED47A">
                         <div class="center">
                             <span>Neumolog&iacute;a</span>
                         </div>
                     </ons-list-item>
-                    <ons-list-item class="l_esp_disponibles" data-id = "Reumatolog&iacute;a">
+                    <ons-list-item class="l_esp_disponibles" modifier="chevron" data-id = "Reumatolog&iacute;a" tappable tap-background-color="#3ED47A">
                         <div class="center">
                             <span>Reumatolog&iacute;a</span>
                         </div>
                     </ons-list-item>
-                    <ons-list-item class="l_esp_disponibles" data-id = "Psiquiatr&iacute;a">
+                    <ons-list-item class="l_esp_disponibles" modifier="chevron" data-id = "Psiquiatr&iacute;a" tappable tap-background-color="#3ED47A">
                         <div class="center">
                             <span>Psiquiatr&iacute;a</span>
                         </div>
                     </ons-list-item>
-                    <ons-list-item class="l_esp_disponibles" data-id = "Geriatr&iacute;a">
+                    <ons-list-item class="l_esp_disponibles" modifier="chevron" data-id = "Geriatr&iacute;a" tappable tap-background-color="#3ED47A">
                         <div class="center">
                             <span>Geriatr&iacute;a</span>
                         </div>
                     </ons-list-item>
-                    <ons-list-item class="l_esp_disponibles" data-id = "Neurocirug&iacute;a">
+                    <ons-list-item class="l_esp_disponibles" modifier="chevron" data-id = "Neurocirug&iacute;a" tappable tap-background-color="#3ED47A">
                         <div class="center">
                             <span>Neurocirug&iacute;a</span>
                         </div>
                     </ons-list-item>
-                    <ons-list-item class="l_esp_disponibles" data-id = "Oncolog&iacute;a">
+                    <ons-list-item class="l_esp_disponibles" modifier="chevron" data-id = "Oncolog&iacute;a" tappable tap-background-color="#3ED47A">
                         <div class="center">
                             <span>Oncolog&iacute;a</span>
                         </div>
                     </ons-list-item>
-                    <ons-list-item class="l_esp_disponibles" data-id = "Traumatolog&iacute;a">
+                    <ons-list-item class="l_esp_disponibles" modifier="chevron" data-id = "Traumatolog&iacute;a" tappable tap-background-color="#3ED47A">
                         <div class="center">
                             <span>Traumatolog&iacute;a</span>
                         </div>
@@ -329,15 +525,16 @@
             </p>
         </div>
     </ons-modal>
+    
     <ons-splitter>
         <ons-splitter-side id="menu" side="left" width="220px" collapse swipeable>
             <ons-page>
                 <ons-list>
                     <ons-list-item onclick="fn.load('t_especialidades_disponibles','p_especialidades_disponibles')" modifier="chevron" tappabletap-background-color="#3ED47A">
-                        <ons-icon icon="md-face" size="20px" style="color:#3ED47A"></ons-icon>&nbsp;Médico
+                        <ons-icon icon="md-face" size="20px" style="color:#3ED47A"></ons-icon>&nbsp;Médicos
                     </ons-list-item>
                     <ons-list-item onclick="fn.load('t_medico_favorito','p_medico_favorito')" modifier="chevron" tappabletap-background-color="#3ED47A">
-                        <ons-icon icon="md-face" size="20px" style="color:#3e84d4"></ons-icon>&nbsp;Médico Favorito
+                        <ons-icon icon="fa-heart" size="20px" style="color:#d47a3e"></ons-icon>&nbsp;Médico Favorito
                     </ons-list-item>
                     <ons-list-item id="btn_logout" modifier="chevron" tappable tap-background-color="#3ED47A">
                         <ons-icon icon="fa-sign-out-alt" size="20px"></ons-icon>&nbsp;Cerrar Sesi&oacute;n
@@ -370,7 +567,6 @@
 
                 ons.getScriptPage().onInit = function () {
 
-                    
                     $(document).on("click", "#btn_login", function () {
                         try {
                             const email = $("#login_usuario").val();
@@ -438,7 +634,7 @@
                     <ons-icon icon="fa-eye-slash" id="mostrar_pwd"></ons-icon>
                 <p>
                     <ons-select id="tipo_login">
-                        <option value="" selected disabled>Seleccione una opción</option>
+                        <option value="">Seleccione una opción</option>
                         <option value="U">Usuario</option>
                         <option value="M">Médico</option>
                     </ons-select>
@@ -499,38 +695,37 @@
                     lista_medicos = JSON.parse(lista_medicos);
                     let url= "";
                     $("#listado_medicos_fav").empty();
-
                     if(lista_medicos == null){
                         let item="";
-                            item = `<ons-list-item tappable tap-background-color="#3ED47A">
-                                        <h1>Aún no tienes medicos favoritos</h1>
-                                        </ons-list-item>`;
-                                $("#listado_medicos_fav").append(item);
+                        item= `<ons-list-item tappable tap-background-color="#3ED474">
+                                <h3>Aún no tienes medicos favoritos</h3>
+                                </ons-list-item>`
+                        $("#listado_medicos_fav").append(item);
                     }else{
                         for(let i=0; i<lista_medicos.length; i++){
-                        url = `https://ort-api.herokuapp.com/medicos/${lista_medicos[i]}`;
-                    
-                        $.ajax({
-                        url:url,
-                        data: "GET",
-                        dataType: "json",
-                        success:function(medicos){
-                            let item="";
-                            item = `<ons-list-item tappable tap-background-color="#3ED47A">
-                                        <div class="left">
-                                            <img class="list-item__thumbnail" src="https://ort-api.herokuapp.com/imagenes/medicos/${medicos._id}.png">
-                                        </div>
-                                        <div class="center">
-                                            <span class="list-item__title">${medicos.nombre}</span><span class="list-item__subtitle">${medicos.apellido}</span>
-                                        </div>
-                                        </ons-list-item>`;
-                                $("#listado_medicos_fav").append(item);
-                        },
-                        error: function (xml_request, err, status) {
-                            ons.notification.toast(xml_request.responseJSON.descripcion, {"timeout": 3000});
+                            url = `https://ort-api.herokuapp.com/medicos/${lista_medicos[i]}`;
+                        
+                            $.ajax({
+                            url:url,
+                            data: "GET",
+                            dataType: "json",
+                            success:function(medicos){
+                                let item="";
+                                item = `<ons-list-item tappable tap-background-color="#3ED47A">
+                                            <div class="left">
+                                                <img class="list-item__thumbnail" src="https://ort-api.herokuapp.com/imagenes/medicos/${medicos._id}.png">
+                                            </div>
+                                            <div class="center">
+                                                <span class="list-item__title">${medicos.nombre}</span><span class="list-item__subtitle">${medicos.apellido}</span>
+                                            </div>
+                                            </ons-list-item>`;
+                                    $("#listado_medicos_fav").append(item);
+                            },
+                            error: function (xml_request, err, status) {
+                                ons.notification.toast(xml_request.responseJSON.descripcion, {"timeout": 3000});
+                            }
+                        })
                         }
-                    })
-                    }
                     }
                 }
             </script>
@@ -545,6 +740,43 @@
             </section>
         </ons-page>
     </template>
-</body>
 
+    <!--Puntuación de usuarios-->
+    <template id="t_punt_usuario">
+        <ons-page id="p_punt_usuario">
+            <script>
+
+            </script>
+             <ons-toolbar>
+                <div class="right">
+                    <ons-toolbar-button><ons-back-button></ons-back-button></ons-toolbar-button>
+                </div>
+                <div class="center">Comentario</div>
+            </ons-toolbar>
+            <section>
+                <label for="txt_comentario_medico">Comentario:</label>
+                <div><input type="text" id="txt_comentario_medico"></div>
+                <label for="selec_puntuacion_medico">Puntuación</label>
+                <p>
+                    <ons-select id="selec_puntuacion_medico">
+                        <option value="" selected disabled>Seleccione una opción</option>
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                        <option value="9">9</option>
+                        <option value="10">10</option>
+                    </ons-select>
+                </p>
+                <p>
+                    <ons-button id="btn_enviar_comentario">Enviar</ons-button>
+                </p>
+            </section>
+        </ons-page>
+    </template>
+</body>
 </html>

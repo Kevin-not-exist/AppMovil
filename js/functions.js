@@ -38,26 +38,28 @@ function login(email, pwd, tipo){
         ),
         contentType: 'application/json; charset=utf-8',
         success:function(respuesta){
+            console.log(respuesta.usuario._id)
+            console.log(respuesta.token)   
             $.ajaxSetup({
                 "headers":{
                     "Authorization":`Bearer ${respuesta.token}`
                 }
              });
+
             let usuario = respuesta.usuario;
             usuario     = JSON.stringify(usuario);
             sessionStorage.setItem("usuario", usuario);
             ons.notification.toast("El usuario ingreso correctamente", {"timeout":3000});
-            //Si es usuario
+            //redireccionar si es usuario
             if(tipo == "U"){
                 fn.load("t_especialidades_disponibles", "p_especialidades_disponibles");
             }
-            //Si es médico
+            //redireccionar si es médico
             if(tipo == "M"){
-                fn.load("t_buscar_usuario", "p_buscar_usuario");
+                fn.load("t_historial_consultas", "p_historial_consultas");
             }
         },
         error:function(respuesta_error, err, status){
-            console.log(respuesta_error);
             console.log(err);
             console.log(status);
             ons.notification.toast(respuesta_error.responseText, {"timeout":3000});
@@ -66,6 +68,7 @@ function login(email, pwd, tipo){
 }
 
 $(document).ready(function(){
+
     $(document).on("click","#btn_logout",function(){
         // eliminar sesion
         sessionStorage.clear();
@@ -75,6 +78,7 @@ $(document).ready(function(){
         fn.load('t_login','p_login');
     });
 
+    //Lista medicos favoritos
     let lista_medico_fav = new Array();
     
     //Registro
@@ -144,14 +148,12 @@ $(document).ready(function(){
         }
     });
 
-
-    $(document).on("click", "#btn_salir_reserva_medica", function(){
+     $(document).on("click", "#btn_salir_reserva_medica", function(){
         document
         .getElementById('my-alert-dialog')
         .hide();
     });
 
-    
 
     //Reserva médica
     $(document).on("click", "#btn_enviar_reserva_medica", function(){
@@ -227,4 +229,47 @@ $(document).ready(function(){
         })
     });
 
+    $(document).on("click", "#btn_ventana_comentario", function(){
+        fn.load("t_punt_usuario","p_punt_usuario");
+    });
+
+    $(document).on("click", "#btn_enviar_comentario", function(){
+        const id_medico  = $("#id_medico_reserva").val();
+        const comentario = $("#txt_comentario_medico").val();
+        const puntaje    = $("#selec_puntuacion_medico").val();
+        const url        = `https://ort-api.herokuapp.com/medicos/${id_medico}/comentarios`;
+
+        try{
+            if(!comentario){
+                throw "Completar comentario para continuar."
+            }
+            if(!puntaje){
+                throw "Completar puntaje para continuar."
+            }
+            $.ajax({
+                url:url,
+                type:"POST",
+                dataType:"json",
+                data:JSON.stringify(
+                    {
+                        "comentario":comentario,
+                        "puntuacion":puntaje
+                    }
+                ),
+                success:function(respuesta){
+                    $("#txt_comentario_medico").val("");
+                    $("#selec_puntuacion_medico").val("");
+                    ons.notification.toast("Comentario enviado correctamente!", {"timeout":3000});
+                },
+                error:function(respuesta_error, err, status){
+                    console.log(err);
+                    console.log(status);
+                    ons.notification.toast(respuesta_error.responseText, {"timeout":3000});
+                }
+            });
+        }
+        catch(e){
+            ons.notification.toast(e, {"timeout":3000});
+        }
+    });
 });
