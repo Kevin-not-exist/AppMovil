@@ -325,6 +325,7 @@
                             
                         },
                         error:function (xml_request, err, status) {
+                            console.log(xml_request);
                             ons.notification.toast(xml_request.responseJSON.descripcion, {
                                 "timeout": 3000
                             });
