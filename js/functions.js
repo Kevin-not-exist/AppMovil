@@ -38,8 +38,6 @@ function login(email, pwd, tipo){
         ),
         contentType: 'application/json; charset=utf-8',
         success:function(respuesta){
-            console.log(respuesta.usuario._id)
-            console.log(respuesta.token)   
             $.ajaxSetup({
                 "headers":{
                     "Authorization":`Bearer ${respuesta.token}`
@@ -69,7 +67,8 @@ function login(email, pwd, tipo){
 
 $(document).ready(function(){
 
-    $(document).on("click","#btn_logout",function(){
+    $(document).on("click","#btn_logout",function(e){
+        e.stopImmediatePropagation();
         // eliminar sesion
         sessionStorage.clear();
         // eliminar local storage
@@ -82,7 +81,8 @@ $(document).ready(function(){
     let lista_medico_fav = new Array();
     
     //Registro
-    $(document).on("click", "#btn_registro", function(){
+    $(document).on("click", "#btn_registro", function(e){
+        e.stopImmediatePropagation();
         const nombre    = $("#nombre").val();
         const apellido  = $("#apellido").val();
         const email     = $("#email").val();
@@ -148,7 +148,8 @@ $(document).ready(function(){
         }
     });
 
-     $(document).on("click", "#btn_salir_reserva_medica", function(){
+     $(document).on("click", "#btn_salir_reserva_medica", function(e){
+        e.stopImmediatePropagation();
         document
         .getElementById('my-alert-dialog')
         .hide();
@@ -156,7 +157,8 @@ $(document).ready(function(){
 
 
     //Reserva médica
-    $(document).on("click", "#btn_enviar_reserva_medica", function(){
+    $(document).on("click", "#btn_enviar_reserva_medica", function(e){
+        e.stopImmediatePropagation();
         const fecha   = $("#fecha_reserva_medica").val();
         const hora    = $("#hora_reserva_medica").val();
         const medico  = $("#id_medico_reserva").val();
@@ -208,7 +210,8 @@ $(document).ready(function(){
     });
 
     //Médico favorito
-    $(document).on("click", "#btn_agregar_medico_fav", function(){
+    $(document).on("click", "#btn_agregar_medico_fav", function(e){
+        e.stopImmediatePropagation();
         const id_medico = $("#id_medico_reserva").val();
         const url = `https://ort-api.herokuapp.com/medicos/${id_medico}`;
 
@@ -229,11 +232,13 @@ $(document).ready(function(){
         })
     });
 
-    $(document).on("click", "#btn_ventana_comentario", function(){
+    $(document).on("click", "#btn_ventana_comentario", function(e){
+        e.stopImmediatePropagation();
         fn.load("t_punt_usuario","p_punt_usuario");
     });
 
-    $(document).on("click", "#btn_enviar_comentario", function(){
+    $(document).on("click", "#btn_enviar_comentario", function(e){
+        e.stopImmediatePropagation();
         const id_medico  = $("#id_medico_reserva").val();
         const comentario = $("#txt_comentario_medico").val();
         const puntaje    = $("#selec_puntuacion_medico").val();

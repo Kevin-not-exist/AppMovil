@@ -23,7 +23,8 @@
         <ons-page id="p_historial_consultas">
             <script>
 
-                $(document).on("click", "#btn_h_c_buscar", function(){
+                $(document).on("click", "#btn_h_c_buscar", function(e){
+                    e.stopImmediatePropagation();
                     let usuario = sessionStorage.getItem("usuario");
                     usuario = JSON.parse(usuario);
                     let fecha= $("#input_h_c_fecha").val();
@@ -96,12 +97,11 @@
                 })
 
 
-                    $(document).on("click", ".usuario_reserva_fecha", function(){
+                    $(document).on("click", ".usuario_reserva_fecha", function(e){
+                        e.stopImmediatePropagation();
                         let nota = $(this).data("nota");
-                        console.log(nota);
                         if(nota==null || nota=="" || nota=="undefined"){
                             nota = "Esta consulta no contiene notas";
-                            console.log("eeeeeee");
                         }
 
                         var notify = function() {
@@ -130,8 +130,8 @@
         <ons-page id="p_buscar_usuario">
             <script>
                 ons.getScriptPage().onShow = function(){
-                    $(document).on("input", "#nombre_apellido" , function(){
-
+                    $(document).on("input", "#nombre_apellido" , function(e){
+                        e.stopImmediatePropagation();
                         const busqueda = $(this).val();
                         if(busqueda.length > 3 && busqueda.includes(" ")){
 
@@ -181,9 +181,9 @@
                         
                         
                     })
-                    $(document).on("click", ".usuario", function(){
+                    $(document).on("click", ".usuario", function(e){
+                        e.stopImmediatePropagation();
                         const id = $(this).data("id");
-                        console.log(id);
                         fn.load("t_consultas_usuario", "p_consultas_usuario", {data:{ //aca
                             id:id
                         }})
@@ -254,7 +254,8 @@
                     const especialista = this.data.id;
                     const url= `https://ort-api.herokuapp.com/medicos/${especialista}`;
 
-                    $(document).on("click", "#btn_reserva_medica", function(){
+                    $(document).on("click", "#btn_reserva_medica", function(e){
+                        e.stopImmediatePropagation();
                         
                         var dialog = document.getElementById('my-alert-dialog');
 
@@ -305,14 +306,12 @@
                             })
                             
                             
-                            console.log('a');
                             let myMap = document.getElementById("mapid");
                             if(myMap == null ){
                                 let contenedor = document.getElementById("map_container");
                                 contenedor.innerHTML = "<div id='mapid'></div>";
                                 myMap = document.getElementById("mapid");
 
-                                console.log('b');
                                 myMap = L.map('mapid').setView([Number(informacion.centroMedico.lat), Number(informacion.centroMedico.lng)], 13);
 
                                 L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -325,7 +324,6 @@
                             
                         },
                         error:function (xml_request, err, status) {
-                            console.log(xml_request);
                             ons.notification.toast(xml_request.responseJSON.descripcion, {
                                 "timeout": 3000
                             });
@@ -392,7 +390,8 @@
             <script>
                 ons.getScriptPage().onInit = function(){
 
-                    $(document).on("click", ".especialista", function(){
+                    $(document).on("click", ".especialista", function(e){
+                        e.stopImmediatePropagation();
                         const id = $(this).data("id");
                         fn.load("t_info_especialista", "p_info_especialista", {data:{
                             id:id
@@ -426,10 +425,7 @@
                             });
                         },
                         error: function (xml_request, err, status) {
-                            console.log(xml_request);
-                            ons.notification.toast(xml_request.responseJSON.descripcion, {
-                                "timeout": 3000
-                            });
+                            ons.notification.toast(xml_request.responseJSON.descripcion, {"timeout": 3000});
                         }
                     })
                 }
@@ -453,7 +449,8 @@
             <script>
                 ons.getScriptPage().onShow = function(){
 
-                    $(document).on("click", ".l_esp_disponibles", function(){
+                    $(document).on("click", ".l_esp_disponibles", function(e){
+                        e.stopImmediatePropagation();
                         const id = $(this).data("id");
                         fn.load("t_especialistas", "p_especialistas", {data:{
                             id:id
@@ -568,7 +565,8 @@
 
                 ons.getScriptPage().onInit = function () {
 
-                    $(document).on("click", "#btn_login", function () {
+                    $(document).on("click", "#btn_login", function (e){
+                        e.stopImmediatePropagation();
                         try {
                             const email = $("#login_usuario").val();
                             const pwd = $("#inp_login_pwd").val();
@@ -589,12 +587,14 @@
                         }
                     });
 
-                    $(document).on("click", "#btn_login_registro", function () {
+                    $(document).on("click", "#btn_login_registro", function (e){
+                        e.stopImmediatePropagation();
                         //Redirecciono a registro
                         fn.load("t_registro", "p_registro");
                     });
 
-                    $(document).on("click", "#mostrar_pwd", function () {
+                    $(document).on("click", "#mostrar_pwd", function (e){
+                        e.stopImmediatePropagation();
                         //si el elemento tiene como atributo icon fa-eye lo cambio a fa-eye-slash y viceversa. 
                         if ($(this).attr("icon") == 'fa-eye') {
                             $(this).attr("icon", "fa-eye-slash");
@@ -608,7 +608,8 @@
                             $("#inp_login_pwd").attr("type", "input");
                         }
                     });
-                    $(document).on("click", "#swt_recordar_password", function () {
+                    $(document).on("click", "#swt_recordar_password", function (e){
+                        e.stopImmediatePropagation();
                         const recordar = document.getElementById('swt_recordar_password');
                         if (recordar.checked) {
                             const email = $("#login_usuario").val();
