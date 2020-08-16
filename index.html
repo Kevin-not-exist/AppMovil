@@ -25,8 +25,7 @@
 
                 $(document).on("click", "#btn_h_c_buscar", function(e){
                     e.stopImmediatePropagation();
-                    let usuario = sessionStorage.getItem("usuario");
-                    usuario = JSON.parse(usuario);
+
                     let fecha= $("#input_h_c_fecha").val();
                     const url= `https://ort-api.herokuapp.com/reservas/?fecha=${fecha}`;
                     
@@ -38,25 +37,17 @@
                             $("#lista_consultas_fecha").empty();
                             let item="";
                             let usu="La consulta no tiene un usuario asignado";
-                            let lista_filtrada=new Array();
+
 
                             if(lista.reservas && lista.reservas!=null && lista.reservas.length>0){
 
                                 $.each(lista.reservas, function(i, consulta){
-                                    // if(consulta._id == usuario._id){ en caso de que la reserva deba ser filtrada por medico
-                                        lista_filtrada.push(consulta);
-                                    //}
-                                })
-
-                                if(lista_filtrada && lista_filtrada!=null && lista_filtrada.length>0){
-                                    $.each(lista_filtrada, function(i, consulta_f){
-
-                                        if(consulta_f.usuario && consulta_f.usuario!=null){
-                                            usu=consulta_f.usuario;
+                                    if(consulta.usuario && consulta.usuario!=null){
+                                            usu=consulta.usuario;
 
                                             item=`
-                                            <ons-list-header>${consulta_f.fechaString}</ons-list-header>
-                                            <ons-list-item  modifier="chevron" class="usuario_reserva_fecha" data-nota="${consulta_f.notas}" tappable tap-background-color="#3ED47A"">
+                                            <ons-list-header>${consulta.fechaString}</ons-list-header>
+                                            <ons-list-item  modifier="chevron" class="usuario_reserva_fecha" data-nota="${consulta.notas}" tappable tap-background-color="#3ED47A"">
                                             <div class="left">
                                                 <img class="list-item__thumbnail" src="http://images.marcelocaiafa.com/imagenes/usuarios/${usu._id}.png">
                                             </div>
@@ -69,7 +60,7 @@
                                         }
                                         else{
                                             item=`
-                                            <ons-list-header>${consulta_f.fechaString}</ons-list-header>
+                                            <ons-list-header>${consulta.fechaString}</ons-list-header>
                                             <ons-list-item >
                                                 <div class="center">
                                                     <span class="list-item__title">${usu}</span>
@@ -77,11 +68,9 @@
                                             </ons-list-item>
                                             `
                                             $("#lista_consultas_fecha").append(item);
-                                        }
-                                    })
-                                }else{
-                                    $("#lista_consultas_fecha").append(`<ons-list-header>${fecha}</ons-list-header><ons-list-item><h3>No tiene reservas para esta fecha</h3></ons-list-item>`);
-                                }
+                                        } 
+                                })
+
 
                             }else{
                                 $("#lista_consultas_fecha").append(`<ons-list-header>${fecha}</ons-list-header><ons-list-item><h3>No tiene reservas para esta fecha</h3></ons-list-item>`);
@@ -122,7 +111,11 @@
                     <ons-list id="lista_consultas_fecha"></ons-list>
                 </div>
             </section>
-            
+            <ons-toolbar>
+                <div class="left">
+                    <ons-toolbar-button icon="fa-bars" onclick="fn.open()"></ons-toolbar-button>
+                </div>
+            </ons-toolbar>
         </ons-page>
     </template>
     <!--hasta ACA-->
@@ -196,10 +189,14 @@
 
                 <ons-list id="lista_buscar_usuario"></ons-list>
             </section>
-
+            <ons-toolbar>
+                <div class="left">
+                    <ons-toolbar-button icon="fa-bars" onclick="fn.open()"></ons-toolbar-button>
+                </div>
+            </ons-toolbar>
         </ons-page>
     </template>
-<!--desde acfa-->
+    <!--desde acfa-->
     <template id="t_consultas_usuario">
         <ons-page id="p_consultas_usuario">
             <script>
@@ -212,11 +209,9 @@
                         dataType: "json",
                         success:function(consultas){
                             let item="";
-                            if(!consulta.notas ||consultas == null || consultas.length<0){
-                                $("#lista_consultas_usuario").append(`<ons-list-header>El usuario no tiene consultas registradas</ons-list-header>`)
-                                    
-                                }else{
-                                    $.each(consultas, function(i, consulta){
+
+                            if(consultas && consultas.length>0 && consultas!=null){
+                                $.each(consultas, function(i, consulta){
                                         {
                                             if(!consulta.notas || consulta.notas == null || consulta.notas==""){
                                                 consulta.notas= "No se agregaron notas"
@@ -229,7 +224,10 @@
                                         }
                                         $("#lista_consultas_usuario").append(item);
                                     })
-                                }
+                            }
+                            else{
+                                $("#lista_consultas_usuario").append(`<ons-list-header>El usuario no tiene consultas registradas</ons-list-header>`)
+                            }
                         },
                         error(xml, err, status){
                             ons.notification.toast(xml_request.responseJSON.descripcion,{
@@ -241,7 +239,14 @@
             </script>
  
             <ons-list id="lista_consultas_usuario"></ons-list>
-              
+            <ons-toolbar>
+                <div class="right">
+                    <ons-toolbar-button><ons-back-button></ons-back-button></ons-toolbar-button>
+                </div>
+                <div class="left">
+                    <ons-toolbar-button icon="fa-bars" onclick="fn.open()"></ons-toolbar-button>
+                </div>
+            </ons-toolbar>
         </ons-page>
     </template>
     <!-- hasta aca -->
@@ -338,6 +343,9 @@
                     <ons-toolbar-button><ons-back-button></ons-back-button></ons-toolbar-button>
                 </div>
                 <div class="center">Médico</div>
+                <div class="left">
+                    <ons-toolbar-button icon="fa-bars" onclick="fn.open()"></ons-toolbar-button>
+                </div>
                 </ons-toolbar>
                 <!--Boron reserva médica-->
                 <ons-fab position="bottom right">
@@ -436,6 +444,9 @@
                     <ons-toolbar-button><ons-back-button></ons-back-button></ons-toolbar-button>
                 </div>
                 <div class="center">Listado de especialistas</div>
+                    <div class="left">
+                        <ons-toolbar-button icon="fa-bars" onclick="fn.open()"></ons-toolbar-button>
+                    </div>
             </ons-toolbar>
             <section>
                 <ons-list id="listado_especialistas">
@@ -523,8 +534,9 @@
             </p>
         </div>
     </ons-modal>
-    
+    <!--MENU -->
     <ons-splitter>
+        <!--menu usuario-->
         <ons-splitter-side id="menu" side="left" width="220px" collapse swipeable>
             <ons-page>
                 <ons-list>
@@ -543,10 +555,32 @@
                 </ons-list>
             </ons-page>
         </ons-splitter-side>
+
+        <!--menu medico-->
+        <ons-splitter-side id="menu_med" side="left" width="220px" collapse swipeable>
+            <ons-page>
+                <ons-list>
+                    <ons-list-item onclick="fn.load('t_historial_consultas','p_historial_consultas')" modifier="chevron" tappabletap-background-color="#3ED47A">
+                        <ons-icon icon="md-face" size="20px" style="color:#3ED47A"></ons-icon>&nbsp;Historial de consultas
+                    </ons-list-item>
+                    <ons-list-item onclick="fn.load('t_buscar_usuario','p_buscar_usuario')" modifier="chevron" tappabletap-background-color="#3ED47A">
+                        <ons-icon icon="fa-heart" size="20px" style="color:#d47a3e"></ons-icon>&nbsp;Buscar usuario
+                    </ons-list-item>
+                    <ons-list-item id="btn_logout" modifier="chevron" tappable tap-background-color="#3ED47A">
+                        <ons-icon icon="fa-sign-out-alt" size="20px"></ons-icon>&nbsp;Cerrar Sesi&oacute;n
+                    </ons-list-item>
+                    <ons-list-item tappable>
+                        <ons-icon icon="fa-times-circle" size="15px"></ons-icon>&nbsp;Salir
+                    </ons-list-item>
+                </ons-list>
+            </ons-page>
+        </ons-splitter-side>
+
         <ons-splitter-content id="content">
             <ons-navigator id="nav" page="t_login"></ons-navigator>
         </ons-splitter-content>
     </ons-splitter>
+
 
     <template id="t_login">
         <ons-page id="p_login">

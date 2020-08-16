@@ -7,12 +7,27 @@ $.ajaxSetup({
 window.fn = {};
 
 window.fn.open = function(){
-    const menu = document.getElementById("menu");
+    let tipo = sessionStorage.getItem("tipo");
+    tipo = JSON.parse(tipo);
+    let menu;
+
+    if(tipo=="U"){
+        menu = document.getElementById("menu");
+    }else{
+        menu = document.getElementById("menu_med");
+    }
     menu.open();
 }
 
 window.fn.load = function(template, page, params) {
-    const menu = document.getElementById("menu");
+    let tipo = sessionStorage.getItem("tipo");
+    tipo = JSON.parse(tipo);
+    let menu;
+    if(tipo=="U"){
+    menu = document.getElementById("menu");
+    }else{
+        menu = document.getElementById("menu_med");
+    }
     menu.close();
     const nav = document.getElementById("nav");
     for(i=0; i<nav.pages.length; i++){
@@ -47,6 +62,7 @@ function login(email, pwd, tipo){
             let usuario = respuesta.usuario;
             usuario     = JSON.stringify(usuario);
             sessionStorage.setItem("usuario", usuario);
+
             ons.notification.toast("El usuario ingreso correctamente", {"timeout":3000});
             //redireccionar si es usuario
             if(tipo == "U"){
@@ -56,6 +72,9 @@ function login(email, pwd, tipo){
             if(tipo == "M"){
                 fn.load("t_historial_consultas", "p_historial_consultas");
             }
+
+            tipo= JSON.stringify(tipo);
+            sessionStorage.setItem("tipo", tipo);
         },
         error:function(respuesta_error, err, status){
             console.log(err);
@@ -267,8 +286,7 @@ $(document).ready(function(){
                     ons.notification.toast("Comentario enviado correctamente!", {"timeout":3000});
                 },
                 error:function(respuesta_error, err, status){
-                    console.log(err);
-                    console.log(status);
+
                     ons.notification.toast(respuesta_error.responseText, {"timeout":3000});
                 }
             });
