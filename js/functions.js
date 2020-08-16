@@ -185,17 +185,9 @@ $(document).ready(function(){
                         "medico": medico,
                     }
                 ),
-                //contentType: 'application/json; charset=utf-8',
-                success:function(respuesta){
-                    $.ajaxSetup({
-                        "headers":{
-                            "Authorization":`Bearer ${respuesta.token}`
-                        }
-                     });
+                success:function(){
                     ons.notification.toast("Reserva médica enviada!", {"timeout":3000});
-                    document
-                    .getElementById('my-alert-dialog')
-                    .hide();
+                    document.getElementById('my-alert-dialog').hide();
                 },
                 error:function(respuesta_error, err, status){
                     console.log(err);
