@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-
+<!--Es este-->
 <head lang="es">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -428,12 +428,13 @@
                                         <div class="right">
                                             <span class="list-item__title">Puntuacion: ${especialista.puntuacion}</span>
                                         </div>
-                                        </ons-list-item>`,
+                                        </ons-list-item>`;
+
                                 $("#listado_especialistas").append(item);
                             });
                         },
-                        error: function (xml_request, err, status) {
-                            ons.notification.toast(xml_request.responseJSON.descripcion, {"timeout": 3000});
+                        error: function (xml_request, err, status){
+                            ons.notification.toast(xml_request.responseJSON.error, {"timeout": 3000});
                         }
                     })
                 }
